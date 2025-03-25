@@ -1,4 +1,4 @@
-# FUcking hell
+# SC2006 SignBridge
 
 This is a mobile application designed for SC2006, developed using the Argon React Native Template. The application aims to provide a platform for real-time sign language translation using AI-powered computer vision techniques.
 
