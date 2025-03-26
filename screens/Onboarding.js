@@ -21,37 +21,28 @@ const Onboarding = ({ navigation }) => {
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <Block flex style={[styles.container, { minHeight: height }]}>
         <StatusBar hidden />
-        <Block flex center>
+
+        <Block flex center style={styles.backgroundContainer}>
           <ImageBackground
             source={Images.Onboarding}
             style={[styles.backgroundImage, { height: height, width }]}
           />
         </Block>
-        <Block center style={styles.overlayContent}>
+
+        <Block style={styles.overlayContent}>
+          {/* Render the Logo - Make it Bigger */}
           <Image source={Images.LogoOnboarding} style={styles.logo} />
-          <Block flex space="around" style={{ zIndex: 2 }}>
-            <Block style={styles.title}>
-              <Block>
-                <Text color="white" size={width > 600 ? 80 : 60}>
-                  Design
-                </Text>
-              </Block>
-              <Block>
-                <Text color="white" size={width > 600 ? 80 : 60}>
-                  System
-                </Text>
-              </Block>
-              <Block style={styles.subTitle}>
-                <Text color="white" size={16}>
-                  Fully coded React Native components.
-                </Text>
-              </Block>
-            </Block>
+
+          {/* Keep Subtitle Only */}
+          <Block style={styles.subTitle}>
+            <Text color="white" size={18}>
+              Breaking Barriers, Building Connections!
+            </Text>
           </Block>
-        </Block>
-        <Block center style={styles.buttonContainer}>
+
+          {/* Button Positioned Below Subtitle */}
           <Button
-            style={[styles.button, { width: width * 0.8 }]}
+            style={[styles.button, { width: width * 0.4 }]} // Reduced width
             color={argonTheme.COLORS.SECONDARY}
             onPress={() => navigation.replace("App")}
             textStyle={{ color: argonTheme.COLORS.BLACK }}
@@ -68,6 +59,13 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.COLORS.BLACK,
   },
+  backgroundContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1,
+  },
   backgroundImage: {
     position: "absolute",
     top: 0,
@@ -75,29 +73,24 @@ const styles = StyleSheet.create({
   },
   overlayContent: {
     position: "absolute",
-    top: "30%",
-    zIndex: 2,
-  },
-  buttonContainer: {
-    position: "absolute",
-    bottom: 30,
+    top: "25%",       // Adjust positioning as needed
+    width: "100%",
+    alignItems: "center",
     zIndex: 3,
+  },
+  logo: {
+    width: 500,     // Increased logo size
+    height: 350,
+    resizeMode: "contain",
+    marginBottom: 5,
+  },
+  subTitle: {
+    marginBottom: 20,  // Space between subtitle and button
   },
   button: {
     height: theme.SIZES.BASE * 3,
     shadowRadius: 0,
     shadowOpacity: 0,
-  },
-  logo: {
-    width: 200,
-    height: 60,
-    marginBottom: 20,
-  },
-  title: {
-    alignItems: 'flex-start',
-  },
-  subTitle: {
-    marginTop: 20
   }
 });
 
