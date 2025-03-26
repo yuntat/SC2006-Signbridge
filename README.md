@@ -32,31 +32,25 @@ git clone https://github.com/your-username/SC2006-SignLanguageApp.git
 ```
 npm install
 ```
-or
-```
-yarn install
-```
 3. Start the application:
 ```
 npx expo start
 ```
-or
 ```
-expo start
+npx expo start --web  (using web preview)
 ```
-
 ## 📦 Usage
 - Run the app on your emulator or physical device.
 - Navigate through the app to start detecting sign language gestures.
 
 ## 💡 Future Improvements
-- Integrate TensorFlow or PyTorch models for improved gesture recognition.
-- Add support for additional sign languages.
-- Implement text-to-speech conversion for accessibility.
+- 
 
-## 📄 License
-This project is licensed under the MIT License.
 
 ## 🤝 Contributors
-- Your Name - Initial Work
-
+- Surya (Leader)
+- Avanesh
+- Aanya
+- Wei Ming
+- Yong Hao
+- Yun Tat
