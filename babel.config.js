@@ -3,7 +3,7 @@ module.exports = function (api) {
 
   return {
     presets: [
-      "babel-preset-expo",  // For Expo compatibility
+      "babel-preset-expo",  // Expo preset for React Native compatibility
       "@babel/preset-react",  // To handle React JSX syntax
       [
         "@babel/preset-env",  // Support for modern JavaScript syntax
@@ -21,19 +21,6 @@ module.exports = function (api) {
         {
           extensions: [".tsx", ".ts", ".js", ".json"],  // Support for TypeScript, JS, and JSON
         },
-      ],
-      // Optional: Add loose mode for Babel plugins to avoid conflicts
-      [
-        "@babel/plugin-transform-class-properties",
-        { loose: true },
-      ],
-      [
-        "@babel/plugin-transform-private-methods",
-        { loose: true },
-      ],
-      [
-        "@babel/plugin-transform-private-property-in-object",
-        { loose: true },
       ],
     ],
   };
