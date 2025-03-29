@@ -16,11 +16,11 @@
   },
  "dependencies": {
    "@react-native-masked-view/masked-view": "0.3.2",
-    "@react-navigation/bottom-tabs": "^6.6.1",  // Updated to match version 6.x
-    "@react-navigation/compat": "^6.6.1",  // Updated to match version 6.x
-   "@react-navigation/drawer": "^6.6.1",  // Updated to match version 6.x
-   "@react-navigation/native": "^6.6.1",  // Updated to match version 6.x
-   "@react-navigation/stack": "^6.6.1",  // Updated to match version 6.x
+    "@react-navigation/bottom-tabs": "^6.6.1",  
+    "@react-navigation/compat": "^6.6.1",  
+   "@react-navigation/drawer": "^6.6.1", 
+   "@react-navigation/native": "^6.6.1",  
+   "@react-navigation/stack": "^6.6.1",  
     "@use-expo/font": "^2.0.0",
     "babel-plugin-module-resolver": "^5.0.2",
    "expo": "^52.0.40",
