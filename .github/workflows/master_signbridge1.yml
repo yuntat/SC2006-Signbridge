@@ -22,9 +22,10 @@ jobs:
 
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
+        
+      - name: Install Expo CLI (New Local Version)
+        run: npm install expo
 
-      - name: Install Expo CLI Globally
-        run: npm install -g expo-cli
 
       - name: Check Expo CLI Version
         run: expo --version || echo "❌ Expo CLI is not installed correctly"
