@@ -3,12 +3,12 @@ module.exports = function (api) {
 
   return {
     presets: [
-      "babel-preset-expo",  // Use Expo's preset for React Native compatibility
-      "@babel/preset-react",  // Handle React JSX syntax
+      "babel-preset-expo",  // For Expo compatibility
+      "@babel/preset-react",  // To handle React JSX syntax
       [
-        "@babel/preset-env",  // Support for modern JS syntax
+        "@babel/preset-env",  // Support for modern JavaScript syntax
         {
-          targets: "> 0.25%, not dead",  // Adjusts to target modern browsers
+          targets: "> 0.25%, not dead",  // Supports modern browsers
           useBuiltIns: "entry",  // Polyfill for modern JS features
           corejs: 3,  // Use CoreJS version 3 for polyfills
         },
