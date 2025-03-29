@@ -26,6 +26,10 @@ jobs:
       - name: Install Newer Version of Expo CLI Globally
         run: npm install -g expo-cli@latest
 
+      - name: Upgrade Expo CLI to Latest Version (Legacy CLI)
+        run: npx expo-cli upgrade
+
+
       - name: Install Expo CLI Locally (Dev Dependency)
         run: npm install expo-cli --save-dev --legacy-peer-deps
 
