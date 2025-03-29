@@ -38,6 +38,10 @@ jobs:
       - name: Check Expo CLI Version
         run: npx expo --version || echo "❌ Expo CLI is not installed correctly"
 
+      - name: Install Webpack & Babel Dependencies (Critical Step)
+        run: npm install webpack webpack-cli babel-loader @babel/core @babel/preset-env @babel/preset-react --save-dev
+
+
       - name: Export Expo App for Web (With Debugging)
         run: |
           set -x  # Enable debugging mode (prints all commands)
