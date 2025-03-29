@@ -50,7 +50,8 @@ jobs:
         run: |
           npm install --save-dev @babel/preset-env @babel/preset-react babel-loader
           npm install webpack webpack-cli --save-dev
-
+          npm install @babel/plugin-syntax-jsx --save-dev  # If you haven't already
+      
 
       - name: Export Expo App for Web (With Debugging)
         run: |
