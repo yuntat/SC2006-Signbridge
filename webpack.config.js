@@ -33,6 +33,18 @@ module.exports = {
           },
         ],
       },
+
+      {
+        test: /\.(js|jsx)$/,  // Handle JS/JSX files
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env', '@babel/preset-react'],
+          },
+        },
+      },
+      
       // Handle font files using file-loader
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/,
