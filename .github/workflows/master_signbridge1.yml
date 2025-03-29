@@ -24,10 +24,12 @@ jobs:
         with:
           node-version: '20.x'
 
+      - name: Install Expo CLI Globally (Critical Step)
+        run: npm install -g expo-cli
+
+
       - name: Export Expo App for Web
-        run: |
-          npx expo install expo-cli
-          npx expo export:web
+        run: npx expo export:web
 
 
       - name: Zip artifact for deployment
