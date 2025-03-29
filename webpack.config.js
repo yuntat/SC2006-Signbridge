@@ -8,41 +8,35 @@ module.exports = {
   },
   module: {
     rules: [
+      // Load CSS, SASS, and LESS files
       {
-            test: /\.(sass|less|css)$/,
-            use: ['style-loader', 'css-loader', 'less-loader']
+        test: /\.(sass|less|css)$/,
+        use: ['style-loader', 'css-loader', 'less-loader'],
       },
+      // Babel loader for both .js and .jsx files
       {
-        test: /\.js$/,
+        test: /\.(js|jsx)$/,  // Handle both .js and .jsx files
         exclude: /node_modules/,
         use: 'babel-loader', // Use Babel loader for JS/JSX files
       },
+      // Handle images with file-loader
       {
-        test: /\.jsx$/, 
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env', '@babel/preset-react'], // Configure Babel to handle modern JS and JSX
-          },
-        },
-      },
-      {
-        test: /\.(png|jpe?g|gif|svg)$/i, // Add rule for images (adjust file types if necessary)
+        test: /\.(png|jpe?g|gif|svg)$/i,  // Add rule for images (adjust file types if necessary)
         use: [
           {
-            loader: 'file-loader', // File loader for handling images
+            loader: 'file-loader',  // File loader for handling images
             options: {
               name: '[path][name].[ext]',
             },
           },
         ],
       },
+      // Handle fonts with file-loader
       {
-        test: /\.(woff|woff2|eot|ttf|otf)$/i, // Add rule for fonts
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,  // Add rule for fonts
         use: [
           {
-            loader: 'file-loader', // File loader for handling fonts
+            loader: 'file-loader',  // File loader for handling fonts
             options: {
               name: '[path][name].[ext]',
             },
@@ -52,6 +46,6 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.json'],
+    extensions: ['.js', '.jsx', '.json'],  // Make sure Webpack knows to resolve .jsx files
   },
 };
