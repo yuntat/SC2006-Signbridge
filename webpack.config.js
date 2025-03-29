@@ -8,6 +8,8 @@ module.exports = {
   },
   module: {
     rules: [
+
+        
       // Handle JS/JSX files with babel-loader
       {
         test: /\.(js|jsx)$/,

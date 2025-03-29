@@ -49,12 +49,8 @@ jobs:
 
       - name: Install Webpack & Babel Dependencies (Critical Step)
         run: |
-          npm install --save-dev @babel/preset-env @babel/preset-react babel-loader
-          npm install webpack webpack-cli --save-dev
-          npm install @babel/plugin-syntax-jsx --save-dev  # If you haven't already
+          npm install --save-dev @babel/preset-env @babel/preset-react babel-loader webpack webpack-cli file-loader @babel/plugin-syntax-jsx
 
-          npm install --save-dev @babel/preset-env @babel/preset-react babel-loader webpack webpack-cli
-          npm install --save-dev file-loader
           
 
 
