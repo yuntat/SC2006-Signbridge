@@ -24,7 +24,8 @@ jobs:
         run: npm install --legacy-peer-deps
         
       - name: Install Expo CLI (New Local Version)
-        run: npm install expo
+        run: npm install expo --legacy-peer-deps
+
 
 
       - name: Check Expo CLI Version
