@@ -9,6 +9,10 @@ module.exports = {
   module: {
     rules: [
       {
+            test: /\.(sass|less|css)$/,
+            use: ['style-loader', 'css-loader', 'less-loader']
+      },
+      {
         test: /\.js$/,
         exclude: /node_modules/,
         use: 'babel-loader', // Use Babel loader for JS/JSX files
