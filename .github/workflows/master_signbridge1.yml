@@ -23,10 +23,10 @@ jobs:
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Build Expo App for Web
-        run: npx expo build:web
+      - name: Export Expo App for Web
+        run: npx expo export:web
 
-      - name: Zip Built Files
+      - name: Zip Exported Files
         run: zip -r release.zip ./web-build
 
       - name: Upload Artifact for Deployment
@@ -45,12 +45,12 @@ jobs:
       contents: read
 
     steps:
-      - name: Download Built Artifact
+      - name: Download Exported Artifact
         uses: actions/download-artifact@v4
         with:
           name: node-app
 
-      - name: Unzip Built Files
+      - name: Unzip Exported Files
         run: unzip release.zip -d web-build
       
       - name: Login to Azure
