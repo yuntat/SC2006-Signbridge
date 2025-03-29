@@ -38,8 +38,9 @@ jobs:
       - name: Check Expo CLI Version
         run: npx expo --version || echo "❌ Expo CLI is not installed correctly"
 
-      - name: Downgrade @react-navigation/native to 5.x (Compatibility Fix)
-        run: npm install @react-navigation/native@5.x @react-navigation/compat@5.x --legacy-peer-deps
+      - name: Downgrade @react-navigation/native, @react-navigation/compat, and @react-navigation/bottom-tabs to 5.x (Compatibility Fix)
+        run: npm install @react-navigation/native@5.x @react-navigation/compat@5.x @react-navigation/bottom-tabs@5.x --legacy-peer-deps
+
 
 
       - name: Install Webpack & Babel Dependencies (Critical Step)
