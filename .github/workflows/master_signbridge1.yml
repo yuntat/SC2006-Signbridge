@@ -42,6 +42,11 @@ jobs:
         run: npm install @react-navigation/native@5.x @react-navigation/compat@5.x --legacy-peer-deps
 
 
+      - name: Install Webpack & Babel Dependencies (Critical Step)
+        run: |
+          npm install --save-dev @babel/preset-env @babel/preset-react babel-loader
+          npm install webpack webpack-cli --save-dev
+
 
       - name: Export Expo App for Web (With Debugging)
         run: |
