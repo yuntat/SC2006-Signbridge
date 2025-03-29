@@ -27,17 +27,17 @@ module.exports = {
           },
         },
       },
-    //   {
-    //     test: /\.(png|jpe?g|gif|svg)$/i, // Add rule for images (adjust file types if necessary)
-    //     use: [
-    //       {
-    //         loader: 'file-loader', // File loader for handling images
-    //         options: {
-    //           name: '[path][name].[ext]',
-    //         },
-    //       },
-    //     ],
-    //   },
+      {
+        test: /\.(png|jpe?g|gif|svg)$/i, // Add rule for images (adjust file types if necessary)
+        use: [
+          {
+            loader: 'file-loader', // File loader for handling images
+            options: {
+              name: '[path][name].[ext]',
+            },
+          },
+        ],
+      },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i, // Add rule for fonts
         use: [
