@@ -21,7 +21,10 @@ jobs:
           node-version: '20.x'
 
       - name: Install Dependencies
-        run: npm install --legacy-peer-deps
+        run: 
+          rm -rf node_modules
+          npm cache clean --force
+          npm install --legacy-peer-deps
         
       - name: Install Newer Version of Expo CLI Globally
         run: npm install -g expo-cli@latest
