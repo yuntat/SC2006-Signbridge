@@ -1,42 +1,42 @@
 const path = require('path');
 
 module.exports = {
-  entry: './App.js',  // Adjust this to your main entry file
+  entry: './App.js',
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),  // Adjust the output folder if needed
+    path: path.resolve(__dirname, 'dist'),
   },
   module: {
     rules: [
-      // Handle CSS, LESS, and SASS files
+      // Handle JS/JSX files with babel-loader
       {
-        test: /\.(sass|less|css)$/,
-        use: ['style-loader', 'css-loader', 'less-loader'],
-      },
-      // Use babel-loader for both JS and JSX files
-      {
-        test: /\.(js|jsx)$/,  // Handle both .js and .jsx files
+        test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        use: 'babel-loader',  // This ensures JSX files are processed
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env', '@babel/preset-react'],
+          },
+        },
       },
-      // Handle image files
+      // Handle image files (png, jpg, svg, etc.) using file-loader
       {
-        test: /\.(png|jpe?g|gif|svg)$/i,
+        test: /\.(png|jpe?g|gif|svg)$/,
         use: [
           {
-            loader: 'file-loader',  // Use file-loader for handling images
+            loader: 'file-loader',
             options: {
               name: '[path][name].[ext]',
             },
           },
         ],
       },
-      // Handle font files
+      // Handle font files using file-loader
       {
-        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        test: /\.(woff|woff2|eot|ttf|otf)$/,
         use: [
           {
-            loader: 'file-loader',  // Use file-loader for fonts
+            loader: 'file-loader',
             options: {
               name: '[path][name].[ext]',
             },
@@ -46,6 +46,6 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.json'],  // Ensure Webpack knows to resolve .jsx files
+    extensions: ['.js', '.jsx', '.json'],
   },
 };

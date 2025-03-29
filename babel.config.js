@@ -3,23 +3,23 @@ module.exports = function (api) {
 
   return {
     presets: [
-      'babel-preset-expo',  // Expo preset for React Native compatibility
-      '@babel/preset-react',  // To handle JSX syntax
+      "babel-preset-expo",  // Expo preset for React Native compatibility
+      "@babel/preset-react",  // To handle React JSX syntax
       [
-        '@babel/preset-env',  // Support for modern JavaScript
+        "@babel/preset-env",  // Support for modern JavaScript syntax
         {
-          targets: '> 0.25%, not dead',  // Ensure compatibility with modern browsers
-          useBuiltIns: 'entry',
-          corejs: 3,
+          targets: "> 0.25%, not dead",  // Supports modern browsers
+          useBuiltIns: "entry",  // Polyfill for modern JS features
+          corejs: 3,  // Use CoreJS version 3 for polyfills
         },
       ],
     ],
     plugins: [
-      'react-native-reanimated/plugin',  // For React Native Reanimated (if needed)
+      "react-native-reanimated/plugin",  // If you're using React Native Reanimated
       [
-        'module-resolver',
+        "module-resolver",
         {
-          extensions: ['.tsx', '.ts', '.js', '.json'],
+          extensions: [".tsx", ".ts", ".js", ".json"],  // Support for TypeScript, JS, and JSON
         },
       ],
     ],
