@@ -1,42 +1,42 @@
 const path = require('path');
 
 module.exports = {
-  entry: './App.js',  // Adjust to your main entry file
+  entry: './App.js',  // Adjust this to your main entry file
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),  // Change output folder if needed
+    path: path.resolve(__dirname, 'dist'),  // Adjust the output folder if needed
   },
   module: {
     rules: [
-      // Load CSS, SASS, and LESS files
+      // Handle CSS, LESS, and SASS files
       {
         test: /\.(sass|less|css)$/,
         use: ['style-loader', 'css-loader', 'less-loader'],
       },
-      // Babel loader for both .js and .jsx files
+      // Use babel-loader for both JS and JSX files
       {
         test: /\.(js|jsx)$/,  // Handle both .js and .jsx files
         exclude: /node_modules/,
-        use: 'babel-loader', // Use Babel loader for JS/JSX files
+        use: 'babel-loader',  // This ensures JSX files are processed
       },
-      // Handle images with file-loader
+      // Handle image files
       {
-        test: /\.(png|jpe?g|gif|svg)$/i,  // Add rule for images (adjust file types if necessary)
+        test: /\.(png|jpe?g|gif|svg)$/i,
         use: [
           {
-            loader: 'file-loader',  // File loader for handling images
+            loader: 'file-loader',  // Use file-loader for handling images
             options: {
               name: '[path][name].[ext]',
             },
           },
         ],
       },
-      // Handle fonts with file-loader
+      // Handle font files
       {
-        test: /\.(woff|woff2|eot|ttf|otf)$/i,  // Add rule for fonts
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
         use: [
           {
-            loader: 'file-loader',  // File loader for handling fonts
+            loader: 'file-loader',  // Use file-loader for fonts
             options: {
               name: '[path][name].[ext]',
             },
@@ -46,6 +46,6 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.json'],  // Make sure Webpack knows to resolve .jsx files
+    extensions: ['.js', '.jsx', '.json'],  // Ensure Webpack knows to resolve .jsx files
   },
 };

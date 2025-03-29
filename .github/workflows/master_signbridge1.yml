@@ -65,8 +65,8 @@ jobs:
           set -x  # Enable debugging mode (prints all commands)
           npx expo export:web || echo "❌ Expo export failed"
 
-      - name: List Project Files (After Build)
-        run: ls -R
+      # - name: List Project Files (After Build)
+      #   run: ls -R
 
       - name: Check if web-build folder exists
         run: |
