@@ -26,8 +26,9 @@ jobs:
       - name: Install Expo CLI (New Local Version)
         run: npm install expo-cli --legacy-peer-deps
 
-      - name: Install Webpack Dependencies
-        run: npm install webpack webpack-cli --save-dev
+      - name: Install Expo CLI Locally (Dev Dependency)
+        run: npm install expo-cli --save-dev --legacy-peer-deps
+
 
 
       - name: Check Expo CLI Version
