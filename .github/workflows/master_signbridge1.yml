@@ -38,8 +38,9 @@ jobs:
       - name: Check Expo CLI Version
         run: npx expo --version || echo "❌ Expo CLI is not installed correctly"
 
-      - name: Install Webpack & Babel Dependencies (Critical Step)
-        run: npm install webpack webpack-cli babel-loader @babel/core @babel/preset-env @babel/preset-react --save-dev
+      - name: Downgrade @react-navigation/native to 5.x (Compatibility Fix)
+        run: npm install @react-navigation/native@5.x @react-navigation/compat@5.x --legacy-peer-deps
+
 
 
       - name: Export Expo App for Web (With Debugging)
