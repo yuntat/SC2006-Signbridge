@@ -24,12 +24,14 @@ jobs:
         run: npm install --legacy-peer-deps
         
       - name: Install Expo CLI (New Local Version)
-        run: npm install expo --legacy-peer-deps
+        run: npm install expo-cli --legacy-peer-deps
 
+      - name: Install Webpack Dependencies
+        run: npm install webpack webpack-cli --save-dev
 
 
       - name: Check Expo CLI Version
-        run: expo --version || echo "❌ Expo CLI is not installed correctly"
+        run: npx expo --version || echo "❌ Expo CLI is not installed correctly"
 
       - name: Export Expo App for Web (With Debugging)
         run: |
