@@ -14,35 +14,36 @@
     "type": "git",
     "url": "git+https://github.com/creativetimofficial/argon-react-native.git"
   },
-  "dependencies": {
-    "@react-native-masked-view/masked-view": "0.3.2",
-    "@react-navigation/bottom-tabs": "^6.3.1",
-    "@react-navigation/compat": "^5.1.25",
-    "@react-navigation/drawer": "6.4.1",
-    "@react-navigation/native": "^6.0.10",
-    "@react-navigation/stack": "^6.2.1",
+ "dependencies": {
+   "@react-native-masked-view/masked-view": "0.3.2",
+    "@react-navigation/bottom-tabs": "^6.6.1",  // Updated to match version 6.x
+    "@react-navigation/compat": "^6.6.1",  // Updated to match version 6.x
+   "@react-navigation/drawer": "^6.6.1",  // Updated to match version 6.x
+   "@react-navigation/native": "^6.6.1",  // Updated to match version 6.x
+   "@react-navigation/stack": "^6.6.1",  // Updated to match version 6.x
     "@use-expo/font": "^2.0.0",
     "babel-plugin-module-resolver": "^5.0.2",
-    "expo": "^52.0.40",
-    "expo-app-loading": "^1.0.3",
-    "expo-asset": "11.0.4",
-    "expo-font": "13.0.4",
-    "expo-modules-core": "2.2.3",
-    "expo-splash-screen": "^0.29.22",
+   "expo": "^52.0.40",
+   "expo-app-loading": "^1.0.3",
+   "expo-asset": "11.0.4",
+   "expo-font": "13.0.4",
+   "expo-modules-core": "2.2.3",
+   "expo-splash-screen": "^0.29.22",
     "galio-framework": "^0.8.0",
-    "glob": "^11.0.1",
-    "prop-types": "^15.7.2",
-    "react": "18.3.1",
-    "react-native": "0.76.7",
-    "react-native-gesture-handler": "2.20.2",
-    "react-native-modal-dropdown": "1.0.2",
-    "react-native-reanimated": "3.16.1",
-    "react-native-safe-area-context": "4.12.0",
-    "react-native-screens": "4.4.0",
+   "glob": "^11.0.1",
+   "prop-types": "^15.7.2",
+   "react": "18.3.1",
+   "react-native": "0.76.7",
+   "react-native-gesture-handler": "2.20.2",
+   "react-native-modal-dropdown": "1.0.2",
+   "react-native-reanimated": "3.16.1",
+   "react-native-safe-area-context": "4.12.0",
+   "react-native-screens": "4.4.0",
     "react-dom": "18.3.1",
-    "react-native-web": "~0.19.13",
+   "react-native-web": "~0.19.13",
     "@expo/metro-runtime": "~4.0.1"
-  },
+},
+
  "devDependencies": {
     "babel-preset-expo": "^12.0.0",
    "babel-loader": "^8.2.2",

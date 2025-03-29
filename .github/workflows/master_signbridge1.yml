@@ -51,8 +51,7 @@ jobs:
         run: |
           npm install --save-dev @babel/preset-env @babel/preset-react babel-loader webpack webpack-cli file-loader @babel/plugin-syntax-jsx
           npm install babel-loader @babel/core @babel/preset-env @babel/preset-react --save-dev
-
-          npx cross-env BABEL_SHOW_CONFIG_FOR=/path/to/your/file.js <your build command>
+          
 
           
 
