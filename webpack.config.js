@@ -1,65 +1,48 @@
-const path = require('path');
-
 module.exports = {
-  entry: './App.js',
-  output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
-  },
-  module: {
-    rules: [
-
-        
-      // Handle JS/JSX files with babel-loader
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env', '@babel/preset-react'],
-          },
-        },
-      },
-      // Handle image files (png, jpg, svg, etc.) using file-loader
-      {
-        test: /\.(png|jpe?g|gif|svg)$/,
-        use: [
-          {
-            loader: 'file-loader',
+    entry: './App.js', // Ensure your entry file is correct
+    output: {
+      filename: 'bundle.js',
+      path: path.resolve(__dirname, 'dist'),
+    },
+    module: {
+      rules: [
+        {
+          test: /\.(js|jsx)$/,  // This will match both .js and .jsx files
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader',
             options: {
-              name: '[path][name].[ext]',
+              presets: ['@babel/preset-env', '@babel/preset-react'], // Add this to handle React JSX
             },
           },
-        ],
-      },
-
-      {
-        test: /\.(js|jsx)$/,  // Handle JS/JSX files
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env', '@babel/preset-react'],
-          },
         },
-      },
-      
-      // Handle font files using file-loader
-      {
-        test: /\.(woff|woff2|eot|ttf|otf)$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: '[path][name].[ext]',
+        // Other loaders for images and fonts
+        {
+          test: /\.(png|jpe?g|gif|svg)$/i,
+          use: [
+            {
+              loader: 'file-loader',
+              options: {
+                name: '[path][name].[ext]',
+              },
             },
-          },
-        ],
-      },
-    ],
-  },
-  resolve: {
-    extensions: ['.js', '.jsx', '.json'],
-  },
-};
+          ],
+        },
+        {
+          test: /\.(woff|woff2|eot|ttf|otf)$/i,
+          use: [
+            {
+              loader: 'file-loader',
+              options: {
+                name: '[path][name].[ext]',
+              },
+            },
+          ],
+        },
+      ],
+    },
+    resolve: {
+      extensions: ['.js', '.jsx', '.json'],
+    },
+  };
+  
