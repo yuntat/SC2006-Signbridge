@@ -1,3 +1,5 @@
+const path = require('path'); // Add this line at the top
+
 module.exports = {
     entry: './App.js', // Ensure your entry file is correct
     output: {
