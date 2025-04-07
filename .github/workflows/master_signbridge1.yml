@@ -29,11 +29,11 @@ jobs:
       
 
       - name: Verify Expo CLI installation
-        run: expo --version
-
+        run: npx expo --version
+      
       - name: Build Expo Web App
         run: npx expo export --platform web
-
+      
       - name: Check if web-build folder exists
         run: |
           if [ -d "./web-build" ]; then
@@ -42,7 +42,7 @@ jobs:
             echo "❌ web-build folder does NOT exist. Something went wrong with the build.";
             exit 1;
           fi
-
+      
       - name: Zip build artifact
         run: zip -r release.zip ./web-build
 
