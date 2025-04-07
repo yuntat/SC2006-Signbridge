@@ -34,17 +34,18 @@ jobs:
       - name: Build Expo Web App
         run: npx expo export --platform web
       
-      - name: Check if web-build folder exists
+      - name: Check if dist folder exists
         run: |
-          if [ -d "./web-build" ]; then
-            echo "✅ web-build folder exists.";
+          if [ -d "./dist" ]; then
+            echo "✅ dist folder exists.";
           else
-            echo "❌ web-build folder does NOT exist. Something went wrong with the build.";
+            echo "❌ dist folder does NOT exist. Something went wrong with the build.";
             exit 1;
           fi
       
+      
       - name: Zip build artifact
-        run: zip -r release.zip ./web-build
+        run: zip -r release.zip ./dist
 
       - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
