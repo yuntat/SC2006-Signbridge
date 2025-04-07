@@ -1,11 +1,11 @@
-name: Build and deploy Node.js app to Azure Web App - signbridge1
+name: Build and deploy Expo web app to Azure Web App - signbridge1
 
 on:
   push:
     branches:
       - master
   workflow_dispatch:
- 
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -13,54 +13,25 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js version
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
 
-      - name: Install Dependencies
-        run:
-          npm install --legacy-peer-deps
-        
-      - name: Install Newer Version of Expo CLI Globally
-        run: npm install -g expo-cli@latest
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
 
-      - name: Upgrade Expo CLI to Latest Version (Legacy CLI)
-        run: npx expo-cli upgrade
+      - name: Install Expo CLI globally
+        run: npm install -g expo-cli
 
+      - name: Verify Expo CLI installation
+        run: expo --version
 
-      - name: Install Expo CLI Locally (Dev Dependency)
-        run: npm install expo-cli --save-dev --legacy-peer-deps
-
-
-
-      - name: Check Expo CLI Version
-        run: npx expo --version || echo "❌ Expo CLI is not installed correctly"
-
-    
-
-
-      - name: Install Dependencies and Fix Navigation Conflict
-        run: npm install @react-navigation/native@5.x @react-navigation/compat@5.x @react-navigation/stack@5.x @react-navigation/bottom-tabs@5.x @react-navigation/drawer@5.x --legacy-peer-deps
-
-
-
-      - name: Install Webpack & Babel Dependencies (Critical Step)
-        run: |
-          npm install --save-dev babel-loader @babel/core @babel/preset-env @babel/preset-react
-
-          
-
-        
-      - name: Export Expo App for Web (With Debugging)
-        run: |
-          set -x  # Enable debugging mode (prints all commands)
-          npx expo export:web || echo "❌ Expo export failed"
-
-      # - name: List Project Files (After Build)
-      #   run: ls -R
+      - name: Build Expo Web App
+        run: expo export --platform web
 
       - name: Check if web-build folder exists
         run: |
@@ -71,10 +42,10 @@ jobs:
             exit 1;
           fi
 
-      - name: Zip artifact for deployment
+      - name: Zip build artifact
         run: zip -r release.zip ./web-build
 
-      - name: Upload artifact for deployment job
+      - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
         with:
           name: node-app
@@ -91,22 +62,22 @@ jobs:
       contents: read
 
     steps:
-      - name: Download artifact from build job
+      - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
           name: node-app
 
-      - name: Unzip artifact for deployment
+      - name: Unzip artifact
         run: unzip release.zip
 
-      - name: Login to Azure
+      - name: Azure Login
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_37825F584B14483E877CA60B4DB962BF }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F3332CBA578542249529AA6388E61ED1 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_BDEA5B0C55C04AED91EF697054857EC1 }}
 
-      - name: 'Deploy to Azure Web App'
+      - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
