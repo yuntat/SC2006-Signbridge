@@ -32,7 +32,8 @@ jobs:
         run: npx expo --version
       
       - name: Build Expo Web App
-        run: npx expo export --platform web
+        run: npx expo export --platform web --output-dir dist
+
       
       - name: Check if dist folder exists
         run: |
