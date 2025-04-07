@@ -24,14 +24,15 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Install Expo CLI globally
-        run: npm install -g expo-cli
+      - name: Install new Expo CLI
+        run: npm install -g @expo/cli
+      
 
       - name: Verify Expo CLI installation
         run: expo --version
 
       - name: Build Expo Web App
-        run: expo export --platform web
+        run: npx expo export --platform web
 
       - name: Check if web-build folder exists
         run: |
