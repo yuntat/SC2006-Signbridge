@@ -49,16 +49,11 @@ jobs:
 
       - name: Install Webpack & Babel Dependencies (Critical Step)
         run: |
-          npm install --save-dev @babel/preset-env @babel/preset-react babel-loader webpack webpack-cli file-loader @babel/plugin-syntax-jsx
-          npm install babel-loader @babel/core @babel/preset-env @babel/preset-react --save-dev
-          
+          npm install --save-dev babel-loader @babel/core @babel/preset-env @babel/preset-react
 
           
 
-
-
-      
-
+        
       - name: Export Expo App for Web (With Debugging)
         run: |
           set -x  # Enable debugging mode (prints all commands)
