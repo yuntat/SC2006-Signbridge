@@ -42,7 +42,11 @@ jobs:
             echo "❌ dist folder does NOT exist. Something went wrong with the build.";
             exit 1;
           fi
-      
+
+
+      - name: Copy web.config for Azure
+        run: cp web.config dist/
+        
       
       - name: Zip build artifact
         run: zip -r release.zip ./dist
