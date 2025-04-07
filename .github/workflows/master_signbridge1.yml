@@ -85,4 +85,4 @@ jobs:
         with:
           app-name: 'signbridge1'
           slot-name: 'Production'
-          package: ./web-build
+          package: ./dist
