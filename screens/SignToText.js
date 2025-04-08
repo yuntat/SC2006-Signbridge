@@ -1,4 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
+import { useTranslation } from 'react-i18next';
+
 import {
     ActivityIndicator,
     Alert,
@@ -18,6 +20,7 @@ import {Ionicons} from '@expo/vector-icons'; // Using Expo's vector icons
 const {width} = Dimensions.get('window');
 
 function SignToText() {
+    const { t } = useTranslation();
     const [selectedVideo, setSelectedVideo] = useState(null); // Stores { uri, name, type }
     const [translationResult, setTranslationResult] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -152,7 +155,7 @@ function SignToText() {
         <ScrollView style={styles.scrollView} contentContainerStyle={styles.container}>
             <TouchableOpacity onPress={handleBack} style={styles.backButton}>
                 <Ionicons name="arrow-back" size={24} color="#333"/>
-                <Text style={styles.backButtonText}>Back</Text>
+                <Text style={styles.backButtonText}>{t('ui.back')}</Text>
             </TouchableOpacity>
 
             <Text style={styles.title}>ASL Video Translator</Text>
@@ -160,7 +163,7 @@ function SignToText() {
 
             <View style={styles.uploadArea}>
                 <TouchableOpacity onPress={pickVideo} style={styles.selectButton} disabled={isLoading}>
-                    <Text style={styles.buttonText}>{selectedVideo ? 'Change Video' : 'Select Video'}</Text>
+                   <Text style={styles.buttonText}>{selectedVideo ? t('signToText.changeVideo') : t('signToText.selectVideo')}</Text>
                 </TouchableOpacity>
 
                 {selectedVideo && (
@@ -194,7 +197,7 @@ function SignToText() {
                         style={[styles.uploadButton, (isLoading || !selectedVideo) && styles.buttonDisabled]}
                         disabled={isLoading || !selectedVideo}
                     >
-                        <Text style={styles.buttonText}>{isLoading ? 'Translating...' : 'Translate Video'}</Text>
+                        <Text style={styles.buttonText}>{isLoading ? t('signToText.translating') : t('signToText.translateVideo')}</Text>
                     </TouchableOpacity>
                 )}
             </View>
@@ -203,7 +206,7 @@ function SignToText() {
             {isLoading && (
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator size="large" color="#3498db"/>
-                    <Text style={styles.loadingText}>Processing your video...</Text>
+                    <Text style={styles.loadingText}>{t('signToText.processing')}</Text>
                 </View>
             )}
 
