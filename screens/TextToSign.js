@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import { StyleSheet, TextInput, View, ImageBackground, useWindowDimensions } from 'react-native';
 import { Block, Button, Text } from 'galio-framework';
 import { Images, argonTheme } from '../constants';
+import { useTranslation } from 'react-i18next';
+import { MaterialIcons } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const TextToSign = ({ navigation }) => {
   const [text, setText] = useState('');
   const { height, width } = useWindowDimensions();
+  const {t} = useTranslation();
 
   const handleConvert = () => {
     console.log('Converting text:', text);
@@ -22,13 +26,22 @@ const TextToSign = ({ navigation }) => {
       >
         <Block flex style={styles.container}>
           <Block style={styles.content}>
-            <Text style={styles.title}>Text to Sign Language</Text>
+            {/* Back Button */}
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => navigation.navigate('SignBridgeMain')}
+            >
+              <MaterialIcons name="arrow-back" size={24} color={argonTheme.COLORS.PRIMARY} />
+              <Text style={styles.backText}>{t('backToHome')}</Text>
+            </TouchableOpacity>
+
+            <Text style={styles.title}>{t('textToSign.title')}</Text>
             
             {/* Text Input Box */}
             <TextInput
               style={styles.input}
               multiline
-              placeholder="Enter your text here..."
+              placeholder={t('textToSign.inputPlaceholder')}
               placeholderTextColor="#999"
               value={text}
               onChangeText={setText}
@@ -40,13 +53,13 @@ const TextToSign = ({ navigation }) => {
               onPress={handleConvert}
               style={styles.button}
             >
-              Convert
+              {t('textToSign.convertButton')}
             </Button>
 
             {/* Sign Language Display Area */}
             {text && (
               <Block style={styles.signDisplay}>
-                <Text style={styles.signText}>Sign language output will appear here</Text>
+                <Text style={styles.signText}>{t('textToSign.outputPlaceholder')}</Text>
               </Block>
             )}
           </Block>
@@ -112,6 +125,17 @@ const styles = StyleSheet.create({
   },
   signText: {
     color: argonTheme.COLORS.BLACK,
+    fontSize: 16
+  },
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+    paddingVertical: 5
+  },
+  backText: {
+    marginLeft: 5,
+    color: argonTheme.COLORS.PRIMARY,
     fontSize: 16
   }
 });
