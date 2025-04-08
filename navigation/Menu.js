@@ -13,7 +13,7 @@ function CustomDrawerContent({
   state,
   ...rest
 }) {
-  const screens = ["SignBridgeMain", "Profile", "Account", "LiveTrans", "Articles"];
+  const screens = ["SignBridgeMain", "Profile", "Account", "LiveTrans", "Text To Sign"];
   return (
     <Block
       style={styles.container}
