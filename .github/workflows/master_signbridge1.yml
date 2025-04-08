@@ -1,39 +1,58 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy Node.js app to Azure Web App - signbridge1
+name: Build and deploy Expo web app to Azure Web App - signbridge1
 
 on:
   push:
     branches:
       - master
   workflow_dispatch:
- 
+
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js version
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
 
-      - name: npm install, build, and test
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Install new Expo CLI
+        run: npm install -g @expo/cli
+      
+
+      - name: Verify Expo CLI installation
+        run: npx expo --version
+      
+      - name: Build Expo Web App
+        run: npx expo export --platform web --output-dir dist
+
+      
+      - name: Check if dist folder exists
         run: |
-          npm install --legacy-peer-deps
-          npm run build --if-present
-          npm run test --if-present
+          if [ -d "./dist" ]; then
+            echo "✅ dist folder exists.";
+          else
+            echo "❌ dist folder does NOT exist. Something went wrong with the build.";
+            exit 1;
+          fi
 
 
-      - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+      - name: Copy web.config for Azure
+        run: cp web.config dist/
+        
+      
+      - name: Zip build artifact
+        run: zip -r release.zip ./dist
 
-      - name: Upload artifact for deployment job
+      - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
         with:
           name: node-app
@@ -46,30 +65,29 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write
+      contents: read
 
     steps:
-      - name: Download artifact from build job
+      - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
           name: node-app
 
-      - name: Unzip artifact for deployment
+      - name: Unzip artifact
         run: unzip release.zip
-      
-      - name: Login to Azure
+
+      - name: Azure Login
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_37825F584B14483E877CA60B4DB962BF }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F3332CBA578542249529AA6388E61ED1 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_BDEA5B0C55C04AED91EF697054857EC1 }}
 
-      - name: 'Deploy to Azure Web App'
+      - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'signbridge1'
           slot-name: 'Production'
-          package: .
-          
+          package: ./dist
