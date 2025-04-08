@@ -16,10 +16,10 @@
       "inputPlaceholder": "Enter your text here...",
       "convertButton": "Convert",
       "outputPlaceholder": "Sign language output will appear here"
-    }
+    },
     "language": {
       "english": "English",
-      "chinese": "Chinese",
+      "chinese": "Chinese"
     }
 
   }
