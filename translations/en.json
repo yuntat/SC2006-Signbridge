@@ -20,6 +20,15 @@
     "language": {
       "english": "English",
       "chinese": "Chinese"
-    }
+    },
+    {
+  "ui": {
+    "back": "Back",
+    "textToSignTranslator": "Text to Sign 🤟 Translator",
+    "translate": "Translate",
+    "inputHint": "Type words like 'HELLO LOVE'"
+  }
+}
+
 
   }
