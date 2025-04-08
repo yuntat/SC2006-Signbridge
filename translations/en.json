@@ -17,4 +17,9 @@
       "convertButton": "Convert",
       "outputPlaceholder": "Sign language output will appear here"
     }
+    "language": {
+      "english": "English",
+      "chinese": "Chinese"
+    }
+
   }
