@@ -16,6 +16,12 @@
     "languageselect": "语言选择"
   },
 
+  "language": {
+    "english": "英语",
+    "chinese": "中文"
+  },
+
+
   "textToSign": {
     "title": "文本到手语",
     "inputPlaceholder": "在此输入您的文本...",
