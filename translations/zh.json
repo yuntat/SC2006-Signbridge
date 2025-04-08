@@ -34,6 +34,14 @@
     "textToSignTranslator": "文本转手语翻译器",
     "translate": "翻译",
     "inputHint": "输入如“你好 爱”这样的词语"
-  }
+  },
+  "signToText": {
+    "selectVideo": "选择视频",
+    "changeVideo": "更换视频",
+    "translateVideo": "翻译视频",
+    "translating": "正在翻译...",
+    "processing": "正在处理您的视频..."
+}
+
 }
 
