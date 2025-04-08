@@ -1,5 +1,5 @@
 import { Block, Text, theme } from "galio-framework";
-import { Image, ScrollView, StyleSheet, View } from "react-native";
+import { Image, ScrollView, StyleSheet, View, TouchableOpacity } from "react-native";
 import { DrawerItem as DrawerCustomItem } from "../components";
 import Images from "../constants/Images";
 import React from "react";
@@ -14,6 +14,10 @@ function CustomDrawerContent({ navigation, state }) {
 
   // Get the current route name from navigation state
   const currentRoute = state.routes[state.index].name;
+
+  const handleLogout = () => {
+    navigation.navigate("Register");
+  };
 
   return (
     <Block style={styles.container}>
@@ -60,6 +64,14 @@ function CustomDrawerContent({ navigation, state }) {
           </Block>
         </ScrollView>
       </Block>
+
+      {/* Logout Button */}
+      <Block style={styles.logoutContainer}>
+        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+          <Image source={Images.logoutIcon} style={styles.icon} />
+          <Text style={styles.logoutText}>Log Out</Text>
+        </TouchableOpacity>
+      </Block>
     </Block>
   );
 }
@@ -88,7 +100,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   activeMenuItem: {
-    backgroundColor: 'rgba(0,0,0,0.05)', // Very subtle gray background
+    backgroundColor: 'rgba(0,0,0,0.05)',
     borderLeftWidth: 3,
     borderLeftColor: theme.COLORS.PRIMARY,
   },
@@ -99,7 +111,7 @@ const styles = StyleSheet.create({
     tintColor: theme.COLORS.MUTED,
   },
   activeIcon: {
-    tintColor: theme.COLORS.BLACK, // Darker color for active icon
+    tintColor: theme.COLORS.BLACK,
   },
   sectionDivider: {
     paddingVertical: 8,
@@ -116,6 +128,20 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     textTransform: 'uppercase',
+  },
+  logoutContainer: {
+    padding: 16,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: theme.COLORS.MUTED,
+  },
+  logoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  logoutText: {
+    marginLeft: 12,
+    fontSize: 16,
+    color: theme.COLORS.MUTED,
   },
 });
 

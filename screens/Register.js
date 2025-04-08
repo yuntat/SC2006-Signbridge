@@ -5,13 +5,15 @@ import {
   Dimensions,
   StatusBar,
   KeyboardAvoidingView,
-  Alert
+  Alert,
+  useWindowDimensions
 } from "react-native";
 import { Block, Checkbox, Text, theme } from "galio-framework";
 import { Button, Icon, Input } from "../components";
 import { Images, argonTheme } from "../constants";
+import { Snackbar } from 'react-native-paper';
 
-const { width, height } = Dimensions.get("screen");
+
 
 const Register = ({ navigation }) => {
   const [formData, setFormData] = React.useState({
@@ -19,17 +21,32 @@ const Register = ({ navigation }) => {
     password: '',
     agreed: false
   });
-  const [loading, setLoading] = React.useState(false);
 
+  const { width, height } = useWindowDimensions();
+
+  const [loading, setLoading] = React.useState(false);
   const [loginLoading, setLoginLoading] = React.useState(false);
   const [registerLoading, setRegisterLoading] = React.useState(false);
 
+    // Snackbar state
+  const [visible, setVisible] = React.useState(false);
+  const [snackbarMessage, setSnackbarMessage] = React.useState('');
+  const [snackbarType, setSnackbarType] = React.useState('error'); // 'error' or 'success'
+  
+  const showSnackbar = (message, type = 'error') => {
+    setSnackbarMessage(message);
+    setSnackbarType(type);
+    setVisible(true);
+  };
+  
+  const hideSnackbar = () => setVisible(false);
+
   const handleLogin = async () => {
     if (!formData.username || !formData.password) {
-      Alert.alert("Error", "Please enter both username and password");
+      showSnackbar("Please enter both username and password");
       return;
     }
-
+  
     setLoginLoading(true);
     try {
       const response = await fetch("https://signbridge-api.azurewebsites.net/users/login", {
@@ -41,13 +58,23 @@ const Register = ({ navigation }) => {
           user_type: "normal"
         })
       });
-
+  
       const data = await response.json();
-      if (!response.ok) throw new Error(data.detail || "Login failed");
       
-      Alert.alert("Success", "Logged in successfully!");
+      if (!response.ok) {
+        if (response.status === 401 || response.status === 405 || response.status === 422 || 
+            data.detail?.toLowerCase().includes("in valid credentials")) {
+              showSnackbar("Log in unsuccessful", "error");
+              throw new Error("Username or password is incorrect");
+        }
+        throw new Error(data.detail || "Login failed");
+      }
+      
+      // If we get here, login was successful
+      showSnackbar("Logged in successfully!", "success");
       navigation.replace("MainApp");
     } catch (error) {
+      console.error("Login error:", error);
       Alert.alert("Error", error.message);
     } finally {
       setLoginLoading(false);
@@ -97,8 +124,9 @@ const Register = ({ navigation }) => {
     <Block flex middle>
       <StatusBar hidden />
       <ImageBackground
-        source={Images.RegisterBackground}
-        style={{ width, height, zIndex: 1 }}
+        source={Images.Onboarding}
+        style={[styles.backgroundImage, { height, width }]}
+        resizeMode="cover"
       >
         <Block safe flex middle>
           <Block style={styles.authContainer}>
@@ -183,11 +211,28 @@ const Register = ({ navigation }) => {
           </Block>
         </Block>
       </ImageBackground>
+      <Snackbar
+        visible={visible}
+        onDismiss={hideSnackbar}
+        duration={3000}
+        style={{
+          backgroundColor: snackbarType === 'error' 
+            ? argonTheme.COLORS.ERROR 
+            : argonTheme.COLORS.SUCCESS
+        }}
+        
+        action={{
+          label: 'Dismiss',
+          onPress: hideSnackbar,
+        }}
+      >
+        {snackbarMessage}
+      </Snackbar>
     </Block>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = (width, height) => StyleSheet.create({
   authContainer: {
     width: width * 0.9,
     height: height * 0.7,
@@ -211,6 +256,9 @@ const styles = StyleSheet.create({
   authButton: {
     width: width * 0.38,
     marginTop: 10
+  },
+  backgroundImage: {
+    flex: 1
   }
 });
 
