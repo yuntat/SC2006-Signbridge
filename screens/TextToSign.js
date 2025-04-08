@@ -1,21 +1,25 @@
 import React, {useState} from 'react';
 import {
     Image,
-    Keyboard,
-    Platform,
     ScrollView,
-    StatusBar,
     StyleSheet,
     Text,
     TextInput,
-    TouchableOpacity,
     View,
+    TouchableOpacity,
+    Platform,
+    Keyboard,
+    Dimensions,
+    StatusBar, // Import StatusBar for potential top padding adjustment
 } from 'react-native';
 
 // --- NEW: Import useNavigation hook ---
 import {useNavigation} from '@react-navigation/native';
 
 import * as Animatable from 'react-native-animatable';
+
+import { useTranslation } from 'react-i18next';
+
 
 // Static image map for LETTERS
 const signImages = {
@@ -100,6 +104,8 @@ const getOriginalWord = (outputKey) => {
 
 const TextToSign = () => {
     const navigation = useNavigation();
+    const { t } = useTranslation();
+
     const [inputText, setInputText] = useState('');
     const [outputItems, setOutputItems] = useState([]);
 
@@ -166,10 +172,10 @@ const TextToSign = () => {
                     let potentialWordMatch = false;
                     for (const pattern of patternsToCheck) {
                         const patternNoSpaces = pattern.replace(/ /g, '');
-                        // Check if the remaining input *could* start a pattern (ignoring spaces)
+                         // Check if the remaining input *could* start a pattern (ignoring spaces)
                         let remainingInputCheck = '';
                         let tempCheckIndex = currentIndex;
-                        while (tempCheckIndex < processedInput.length && remainingInputCheck.length < patternNoSpaces.length) {
+                        while(tempCheckIndex < processedInput.length && remainingInputCheck.length < patternNoSpaces.length) {
                             if (processedInput[tempCheckIndex] !== ' ') {
                                 remainingInputCheck += processedInput[tempCheckIndex];
                             }
@@ -177,9 +183,9 @@ const TextToSign = () => {
                         }
                         if (patternNoSpaces.startsWith(remainingInputCheck) && remainingInputCheck.length > 0) {
                             // If the current char starts a potential pattern, don't treat it as isolated yet
-                            // (This check might be overly complex, the original single char logic might be sufficient)
-                            // Let's simplify - the previous word check should handle most cases. If 'LOVE'
-                            // didn't match before, 'L' should be treated as 'L'.
+                           // (This check might be overly complex, the original single char logic might be sufficient)
+                           // Let's simplify - the previous word check should handle most cases. If 'LOVE'
+                           // didn't match before, 'L' should be treated as 'L'.
                         }
                     }
                     // Simplified: just push the letter if no word was found starting at this index
@@ -227,22 +233,24 @@ const TextToSign = () => {
                 onPress={handleGoBack}
                 activeOpacity={0.7}
             >
-                <Text style={styles.backButtonText}>{'< Back'}</Text>
+                <Text style={styles.backButtonText}>{t('ui.back')}</Text>
+
             </TouchableOpacity>
 
             <Animatable.Text
-                animation="fadeInDown"
-                duration={800}
-                style={styles.title}
+              animation="fadeInDown"
+              duration={800}
+              style={styles.title}
             >
-                Text to Sign 🤟 Translator
+              {t('ui.textToSignTranslator')}
             </Animatable.Text>
+
 
             {/* Input */}
             <AnimatableView animation="fadeInUp" duration={600} delay={200}>
                 <TextInput
                     style={styles.input}
-                    placeholder="Type words like 'HELLO LOVE'" // Updated placeholder
+                    placeholder={t('ui.inputHint')}
                     placeholderTextColor="#A0AEC0"
                     value={inputText}
                     onChangeText={setInputText}
@@ -259,7 +267,7 @@ const TextToSign = () => {
                     onPress={handleTranslate}
                     activeOpacity={0.7}
                 >
-                    <Text style={styles.translateButtonText}>Translate</Text>
+                    <Text style={styles.translateButtonText}>{t('ui.translate')}</Text>
                 </TouchableOpacity>
             </AnimatableView>
             <AnimatableView animation="fadeInUp" duration={600} delay={500}>
@@ -380,7 +388,7 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         color: '#2D3748',
         shadowColor: '#000',
-        shadowOffset: {width: 0, height: 2},
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
@@ -392,7 +400,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 25,
         shadowColor: '#2C5282',
-        shadowOffset: {width: 0, height: 4},
+        shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 5,
         elevation: 5,
@@ -419,13 +427,13 @@ const styles = StyleSheet.create({
         minHeight: 100,
         justifyContent: 'space-between',
         shadowColor: '#000',
-        shadowOffset: {width: 0, height: 1},
+        shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.08,
         shadowRadius: 3,
         elevation: 2,
     },
     wordSignItem: {
-        width: 110, // Keep word signs potentially wider
+       width: 110, // Keep word signs potentially wider
     },
     image: {
         width: 50,
