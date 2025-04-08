@@ -4,36 +4,94 @@ import {
   ImageBackground,
   Dimensions,
   StatusBar,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  Alert
 } from "react-native";
 import { Block, Checkbox, Text, theme } from "galio-framework";
-
 import { Button, Icon, Input } from "../components";
 import { Images, argonTheme } from "../constants";
 
 const { width, height } = Dimensions.get("screen");
 
 const Register = ({ navigation }) => {
-  // Add state for form fields
   const [formData, setFormData] = React.useState({
-    name: '',
-    email: '',
+    username: '',
     password: '',
     agreed: false
   });
-  const handleRegister = () => {
-    // Here you would typically:
-    // 1. Validate inputs
-    // 2. Call your backend API
-    // 3. On success, navigate to main app
-    
-    // For now, just navigate to App on button press
-    navigation.replace("SignBridgeMain"); // This replaces Register screen with main app
+  const [loading, setLoading] = React.useState(false);
+
+  const [loginLoading, setLoginLoading] = React.useState(false);
+  const [registerLoading, setRegisterLoading] = React.useState(false);
+
+  const handleLogin = async () => {
+    if (!formData.username || !formData.password) {
+      Alert.alert("Error", "Please enter both username and password");
+      return;
+    }
+
+    setLoginLoading(true);
+    try {
+      const response = await fetch("https://signbridge-api.azurewebsites.net/users/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: formData.username,
+          password: formData.password,
+          user_type: "normal"
+        })
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.detail || "Login failed");
+      
+      Alert.alert("Success", "Logged in successfully!");
+      navigation.replace("MainApp");
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
+  const handleRegister = async () => {
+    if (!formData.username || !formData.password) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+
+    if (!formData.agreed) {
+      Alert.alert("Error", "You must agree to the terms and policies");
+      return;
+    }
+
+    setRegisterLoading(true);
+    try {
+      const response = await fetch("https://signbridge-api.azurewebsites.net/users/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: formData.username,
+          password: formData.password,
+          user_type: "normal"
+        })
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.detail || "Registration failed");
+      
+      Alert.alert("Success", "Account created successfully!");
+      navigation.replace("MainApp");
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    } finally {
+      setRegisterLoading(false);
+    }
   };
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({...prev, [field]: value}));
-  }; //ts new
+  };
 
   return (
     <Block flex middle>
@@ -43,151 +101,84 @@ const Register = ({ navigation }) => {
         style={{ width, height, zIndex: 1 }}
       >
         <Block safe flex middle>
-          <Block style={styles.circleBackContainer}>
-            <Button 
-              onlyIcon
-              icon="arrow-left"
-              iconFamily="Feather"
-              iconSize={16}
-              color={argonTheme.COLORS.PRIMARY}
-              iconColor="#fff"
-              onPress={() => navigation.navigate('Onboarding')}
-              style={styles.circleBackButton}
-            />
-          </Block>
-          <Block style={styles.registerContainer}>
-            <Block flex={0.25} middle style={styles.socialConnect}>
-              <Text color="#8898AA" size={12}>
-                Sign up with
-              </Text>
-              <Block row style={{ marginTop: theme.SIZES.BASE }}>
-                <Button style={{ ...styles.socialButtons, marginRight: 30 }}>
-                  <Block row>
-                    <Icon
-                      name="logo-github"
-                      family="Ionicon"
-                      size={14}
-                      color={"black"}
-                      style={{ marginTop: 2, marginRight: 5 }}
-                    />
-                    <Text style={styles.socialTextButtons}>GITHUB</Text>
-                  </Block>
-                </Button>
-                <Button style={styles.socialButtons}>
-                  <Block row>
-                    <Icon
-                      name="logo-google"
-                      family="Ionicon"
-                      size={14}
-                      color={"black"}
-                      style={{ marginTop: 2, marginRight: 5 }}
-                    />
-                    <Text style={styles.socialTextButtons}>GOOGLE</Text>
-                  </Block>
-                </Button>
-              </Block>
-            </Block>
-            <Block flex>
-              <Block flex={0.17} middle>
-                <Text color="#8898AA" size={12}>
-                  Or sign up the classic way
-                </Text>
-              </Block>
-              <Block flex center>
-                <KeyboardAvoidingView
-                  style={{ flex: 1 }}
-                  behavior="padding"
-                  enabled
-                >
-                  <Block width={width * 0.8} style={{ marginBottom: 15 }}>
-                    <Input
-                      borderless
-                      placeholder="Name"
-                      value = {formData.name}
-                      onChangeText={(text) => handleInputChange('name', text)}
-                      iconContent={
-                        <Icon
-                          size={16}
-                          color={argonTheme.COLORS.ICON}
-                          name="hat-3"
-                          family="ArgonExtra"
-                          style={styles.inputIcons}
-                        />
-                      }
-                    />
-                  </Block>
-                  <Block width={width * 0.8} style={{ marginBottom: 15 }}>
-                    <Input
-                      borderless
-                      placeholder="Email"
-                      value = {formData.email}
-                      onChangeText={(text) => handleInputChange('email', text)}
-                      iconContent={
-                        <Icon
-                          size={16}
-                          color={argonTheme.COLORS.ICON}
-                          name="ic_mail_24px"
-                          family="ArgonExtra"
-                          style={styles.inputIcons}
-                        />
-                      }
-                    />
-                  </Block>
-                  <Block width={width * 0.8}>
-                    <Input
-                      password
-                      borderless
-                      placeholder="Password"
-                      value = {formData.name}
-                      onChangeText={(text) => handleInputChange('password', text)}
-                      iconContent={
-                        <Icon
-                          size={16}
-                          color={argonTheme.COLORS.ICON}
-                          name="padlock-unlocked"
-                          family="ArgonExtra"
-                          style={styles.inputIcons}
-                        />
-                      }
-                    />
-                    <Block row style={styles.passwordCheck}>
-                      <Text size={12} color={argonTheme.COLORS.MUTED}>
-                        password strength:
-                      </Text>
-                      <Text bold size={12} color={argonTheme.COLORS.SUCCESS}>
-                        {" "}
-                        strong
-                      </Text>
-                    </Block>
-                  </Block>
-                  <Block row width={width * 0.75}>
-                    <Checkbox
-                      checkboxStyle={{
-                        borderWidth: 3
-                      }}
-                      color={argonTheme.COLORS.PRIMARY}
-                      label="I agree with the"
-                    />
-                    <Button
-                      style={{ width: 100 }}
-                      color="transparent"
-                      textStyle={{
-                        color: argonTheme.COLORS.PRIMARY,
-                        fontSize: 14
-                      }}
-                    >
-                      Privacy Policy
-                    </Button>
-                  </Block>
-                  <Block middle>
-                    <Button color="primary" style={styles.createButton} onPress={handleRegister}>
-                      <Text bold size={14} color={argonTheme.COLORS.WHITE}>
-                        CREATE ACCOUNT
-                      </Text>
-                    </Button>
-                  </Block>
-                </KeyboardAvoidingView>
-              </Block>
+          <Block style={styles.authContainer}>
+            <Block flex center>
+              <KeyboardAvoidingView behavior="padding" enabled>
+                {/* Username Field */}
+                <Block width={width * 0.8} style={{ marginBottom: 20 }}>
+                  <Input
+                    borderless
+                    placeholder="Username"
+                    value={formData.username}
+                    onChangeText={(text) => handleInputChange('username', text)}
+                    iconContent={
+                      <Icon
+                        size={16}
+                        color={argonTheme.COLORS.ICON}
+                        name="hat-3"
+                        family="ArgonExtra"
+                        style={styles.inputIcons}
+                      />
+                    }
+                  />
+                </Block>
+
+                {/* Password Field */}
+                <Block width={width * 0.8} style={{ marginBottom: 20 }}>
+                  <Input
+                    password
+                    borderless
+                    placeholder="Password"
+                    value={formData.password}
+                    onChangeText={(text) => handleInputChange('password', text)}
+                    iconContent={
+                      <Icon
+                        size={16}
+                        color={argonTheme.COLORS.ICON}
+                        name="padlock-unlocked"
+                        family="ArgonExtra"
+                        style={styles.inputIcons}
+                      />
+                    }
+                  />
+                </Block>
+
+                {/* Terms Checkbox */}
+                <Block row width={width * 0.8} style={{ marginBottom: 30 }}>
+                  <Checkbox
+                    checkboxStyle={{ borderWidth: 3 }}
+                    color={argonTheme.COLORS.PRIMARY}
+                    label="I agree to the terms and policies"
+                    checked={formData.agreed}
+                    onChange={(checked) => handleInputChange('agreed', checked)}
+                  />
+                </Block>
+
+                {/* Action Buttons */}
+                <Block row space="between" style={styles.buttonContainer}>
+                  <Button
+                    color="primary"
+                    style={styles.authButton}
+                    onPress={handleRegister}
+                    disabled={loginLoading || registerLoading}
+                  >
+                    <Text bold size={14} color={argonTheme.COLORS.WHITE}>
+                      {registerLoading ? "CREATING..." : "NEW USER"}
+                    </Text>
+                  </Button>
+                  
+                  <Button
+                    color="success"
+                    style={styles.authButton}
+                    onPress={handleLogin}
+                    disabled={loginLoading || registerLoading}
+                  >
+                    <Text bold size={14} color={argonTheme.COLORS.WHITE}>
+                      {loginLoading ? "LOGGING IN..." : "RETURNING USER"}
+                    </Text>
+                  </Button>
+                </Block>
+              </KeyboardAvoidingView>
             </Block>
           </Block>
         </Block>
@@ -195,81 +186,31 @@ const Register = ({ navigation }) => {
     </Block>
   );
 };
-// class Register extends React.Component {
-//   render() {
-    
-//   }
-// }
 
 const styles = StyleSheet.create({
-  registerContainer: {
+  authContainer: {
     width: width * 0.9,
-    height: height * 0.875,
+    height: height * 0.7,
     backgroundColor: "#F4F5F7",
     borderRadius: 4,
     shadowColor: argonTheme.COLORS.BLACK,
-    shadowOffset: {
-      width: 0,
-      height: 4
-    },
+    shadowOffset: { width: 0, height: 4 },
     shadowRadius: 8,
     shadowOpacity: 0.1,
     elevation: 1,
-    overflow: "hidden"
-  },
-  socialConnect: {
-    backgroundColor: argonTheme.COLORS.WHITE,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: "#8898AA"
-  },
-  socialButtons: {
-    width: 120,
-    height: 40,
-    backgroundColor: "#fff",
-    shadowColor: argonTheme.COLORS.BLACK,
-    shadowOffset: {
-      width: 0,
-      height: 4
-    },
-    shadowRadius: 8,
-    shadowOpacity: 0.1,
-    elevation: 1
-  },
-  socialTextButtons: {
-    color: argonTheme.COLORS.PRIMARY,
-    fontWeight: "800",
-    fontSize: 14
+    overflow: "hidden",
+    padding: 20
   },
   inputIcons: {
     marginRight: 12
   },
-  passwordCheck: {
-    paddingLeft: 15,
-    paddingTop: 13,
-    paddingBottom: 30
+  buttonContainer: {
+    width: width * 0.8,
+    justifyContent: 'space-between'
   },
-  createButton: {
-    width: width * 0.5,
-    marginTop: 25
-  },
-  circleBackContainer: {
-    position: 'absolute',
-    top: 40,
-    left: 20,
-    zIndex: 10,
-  },
-  circleBackButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    padding: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: argonTheme.COLORS.BLACK,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    shadowOpacity: 0.1,
-    elevation: 2,
+  authButton: {
+    width: width * 0.38,
+    marginTop: 10
   }
 });
 

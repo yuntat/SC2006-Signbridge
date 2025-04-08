@@ -12,6 +12,9 @@ const img1 = require("../assets/imgs/img1.jpg");
 const img2 = require("../assets/imgs/img2.png");
 const img3 = require("../assets/imgs/img3.jpg");
 const img4 = require("../assets/imgs/img4.jpg");
+const livetrans = require("../assets/imgs/livetrans.png");
+const SignBridgeLogoSmall = require("../assets/imgs/logo_signbridge_small.png");
+const HomeIcon = require("../assets/imgs/home.png");
 // internet imgs
 
 const ProfilePicture = 'https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?fit=crop&w=1650&q=80';
@@ -45,5 +48,8 @@ export default {
   img1,
   img2,
   img3,
-  img4
+  img4,
+  livetrans,
+  SignBridgeLogoSmall,
+  HomeIcon
 };

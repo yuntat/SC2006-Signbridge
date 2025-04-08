@@ -1,5 +1,7 @@
 # SC2006 SignBridge
 
+👉 [Visit the Website](https://nice-sand-0630da700.6.azurestaticapps.net/)
+
 This is a mobile application designed for SC2006, developed using the Argon React Native Template. The application aims to provide a platform for real-time sign language translation using AI-powered computer vision techniques.
 
 ## 📌 Project Description
@@ -33,11 +35,14 @@ git clone https://github.com/your-username/SC2006-SignLanguageApp.git
 npm install
 ```
 3. Start the application:
+
+- Normal:
 ```
 npx expo start
 ```
+- Web View:
 ```
-npx expo start --web  (using web preview)
+npx expo start --web
 ```
 ## 📦 Usage
 - Run the app on your emulator or physical device.

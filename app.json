@@ -29,6 +29,9 @@
     "plugins": [
       "expo-asset",
       "expo-font"
-    ]
+    ],
+    "android": {
+      "package": "com.anonymous.argonfreereactnative"
+    }
   }
 }

@@ -73,19 +73,19 @@ const styles = StyleSheet.create({
   },
   overlayContent: {
     position: "absolute",
-    top: "25%",       // Adjust positioning as needed
+    top: "25%", // Adjust positioning as needed
     width: "100%",
     alignItems: "center",
     zIndex: 3,
   },
   logo: {
-    width: 500,     // Increased logo size
+    width: 500, // Increased logo size
     height: 350,
     resizeMode: "contain",
     marginBottom: 5,
   },
   subTitle: {
-    marginBottom: 20,  // Space between subtitle and button
+    marginBottom: 20, // Space between subtitle and button
   },
   button: {
     height: theme.SIZES.BASE * 3,

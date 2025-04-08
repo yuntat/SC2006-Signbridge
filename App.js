@@ -1,21 +1,20 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Image } from "react-native";
+import { Image, StyleSheet } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
 import * as Font from "expo-font";
 import { Asset } from "expo-asset";
 import { Block, GalioProvider } from "galio-framework";
 import { NavigationContainer } from "@react-navigation/native";
-
-// Before rendering any navigation stack
 import { enableScreens } from "react-native-screens";
 enableScreens();
 
 import Screens from "./navigation/Screens";
 import { Images, articles, argonTheme } from "./constants";
 
-console.log("Debug statement 1");
+// Add these imports for i18n
+import { I18nextProvider } from 'react-i18next';
+import i18n from './i18n';
 
-// cache app images
 const assetImages = [
   Images.Onboarding,
   Images.LogoOnboarding,
@@ -29,10 +28,8 @@ const assetImages = [
   Images.img3,
   Images.img4
 ];
-// cache product images
-articles.map((article) => assetImages.push(article.image));
 
-console.log("Debug statement 2");
+articles.map((article) => assetImages.push(article.image));
 
 function cacheImages(images) {
   return images.map((image) => {
@@ -45,27 +42,18 @@ function cacheImages(images) {
 }
 
 export default function App() {
-  
-  console.log("Debug statement 3");
-
   const [appIsReady, setAppIsReady] = useState(false);
-
-  console.log("Debug statement 4");
 
   useEffect(() => {
     async function prepare() {
-      console.log("Debug statement 5");
       try {
-        //Load Resources
         await _loadResourcesAsync();
-        // Pre-load fonts, make any API calls you need to do here
         await Font.loadAsync({
           ArgonExtra: require("./assets/font/argon.ttf"),
         });
       } catch (e) {
         console.warn(e);
       } finally {
-        // Tell the application to render
         setAppIsReady(true);
       }
     }
@@ -87,12 +75,25 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer onReady={onLayoutRootView}>
-      <GalioProvider theme={argonTheme}>
-        <Block flex>
-          <Screens />
-        </Block>
-      </GalioProvider>
-    </NavigationContainer>
+    <I18nextProvider i18n={i18n}>  {/* Wrap everything with I18nextProvider */}
+      <NavigationContainer onReady={onLayoutRootView}>
+        <GalioProvider theme={argonTheme}>
+          <Block flex>
+            <Screens />
+          </Block>
+        </GalioProvider>
+      </NavigationContainer>
+    </I18nextProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  drawerContainer: {
+    flex: 1,
+    overflow: 'hidden',
+  },
+  mainContent: {
+    flex: 1,
+    zIndex: 0,
+  },
+});
