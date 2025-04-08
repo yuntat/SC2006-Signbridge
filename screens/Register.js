@@ -64,7 +64,7 @@ const Register = ({ navigation }) => {
       if (!response.ok) {
         if (response.status === 401 || response.status === 405 || response.status === 422 || 
             data.detail?.toLowerCase().includes("in valid credentials")) {
-              showSnackbar("Log in unsuccessful", "error");
+              showSnackbar("Log in unsuccessful, Username or password is incorrect", "error");
               throw new Error("Username or password is incorrect");
         }
         throw new Error(data.detail || "Login failed");
