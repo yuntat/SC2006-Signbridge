@@ -29,12 +29,15 @@
     "inputHint": "Type words like 'HELLO LOVE'"
   },
  "signToText": {
-      "selectVideo": "Select Video",
-      "changeVideo": "Change Video",
-      "translateVideo": "Translate Video",
-      "translating": "Translating...",
-      "processing": "Processing your video..."
+  "title": "ASL Video Translator",
+  "subtitle": "Upload a pre-recorded video of Sign Language",
+  "selectVideo": "Select Video",
+  "changeVideo": "Change Video",
+  "translateVideo": "Translate Video",
+  "translating": "Translating...",
+  "processing": "Processing your video..."
 }
+
 
 }
 
