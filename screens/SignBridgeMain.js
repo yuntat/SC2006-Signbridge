@@ -20,7 +20,7 @@ const SignBridgeMain = ({ navigation }) => {
       id: 2, 
       image: Images.img2, 
       text: t('buttons.preRecordedVideo'),
-      onPress: () => console.log('Pre-Recorded pressed')
+      onPress: () => navigation.navigate('SignToText')
     },
     { 
       id: 3, 

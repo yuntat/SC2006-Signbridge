@@ -8,6 +8,7 @@ function CustomDrawerContent({ navigation, state }) {
   const menuItems = [
     { name: "SignBridgeMain", icon: Images.img1, routeName: "SignBridgeMain" },
     { name: "LiveTrans", icon: Images.img2, routeName: "LiveTrans" },
+    {name: "SignToText",icon: Images.img5 , routeName: "SignToText"},
     { name: "TextToSign", icon: Images.img3, routeName: "TextToSign" },
     { name: "LanguageSelect", icon: Images.img4, routeName: "LanguageSelect" }
   ];
