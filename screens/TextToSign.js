@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
     Image,
     ScrollView,
@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 
 // --- NEW: Import useNavigation hook ---
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 import * as Animatable from 'react-native-animatable';
 
@@ -127,7 +127,7 @@ const TextToSign = () => {
                 let inputSubstringNoSpaces = '';
                 let tempIndex = currentIndex;
                 let charsToFormPattern = 0; // How many non-space chars needed for the pattern
-                while(tempIndex < processedInput.length && charsToFormPattern < patternNoSpaces.length) {
+                while (tempIndex < processedInput.length && charsToFormPattern < patternNoSpaces.length) {
                     const char = processedInput[tempIndex];
                     if (char !== ' ') {
                         inputSubstringNoSpaces += char;
@@ -188,27 +188,27 @@ const TextToSign = () => {
                            // didn't match before, 'L' should be treated as 'L'.
                         }
                     }
-                     // Simplified: just push the letter if no word was found starting at this index
+                    // Simplified: just push the letter if no word was found starting at this index
                     result.push(char);
 
                 } else if (char === ' ') {
                     // Add space only if the previous item wasn't already a space
                     if (result.length > 0 && result[result.length - 1] !== ' ') {
-                         result.push(' ');
+                        result.push(' ');
                     }
                 }
                 currentIndex++; // Move to the next character
             }
 
-             // Consume any subsequent spaces after finding a word or processing a character
-             while (currentIndex < processedInput.length && processedInput[currentIndex] === ' ') {
-                 // Add a single space delimiter if needed
-                 if (result.length > 0 && result[result.length - 1] !== ' ' && !foundWord) { // Add space only if previous wasn't space or a word boundary
-                     result.push(' ');
-                 } else if (foundWord && result.length > 0 && result[result.length - 1] !== ' '){
-                     // If we just added a word, ensure there's a space after it if followed by spaces
-                      result.push(' ');
-                 }
+            // Consume any subsequent spaces after finding a word or processing a character
+            while (currentIndex < processedInput.length && processedInput[currentIndex] === ' ') {
+                // Add a single space delimiter if needed
+                if (result.length > 0 && result[result.length - 1] !== ' ' && !foundWord) { // Add space only if previous wasn't space or a word boundary
+                    result.push(' ');
+                } else if (foundWord && result.length > 0 && result[result.length - 1] !== ' ') {
+                    // If we just added a word, ensure there's a space after it if followed by spaces
+                    result.push(' ');
+                }
                 currentIndex++;
             }
         } // End while loop
@@ -270,7 +270,15 @@ const TextToSign = () => {
                     <Text style={styles.translateButtonText}>{t('ui.translate')}</Text>
                 </TouchableOpacity>
             </AnimatableView>
-
+            <AnimatableView animation="fadeInUp" duration={600} delay={500}>
+                <TouchableOpacity
+                    style={styles.clearButton}
+                    onPress={() => setInputText('')} // Clear the input
+                    activeOpacity={0.7}
+                >
+                    <Text style={styles.clearButtonText}>Clear</Text>
+                </TouchableOpacity>
+            </AnimatableView>
             {/* Output Area */}
             {outputItems.length > 0 && (
                 <ScrollView
@@ -296,40 +304,40 @@ const TextToSign = () => {
                                 />
                             );
                         } else if (wordImages[item]) {
-                             // Render word image (using the mapped 'item' which could be 'ILOVEYOU')
-                             const wordSource = wordImages[item];
-                             const displayLabel = getOriginalWord(item); // Get display text based on output key
-                             return (
-                                 <AnimatableView
-                                     key={`word-${item}-${index}`}
-                                     style={[styles.signItem, styles.wordSignItem]}
-                                     {...animationProps}
-                                 >
-                                     <Image
-                                         source={wordSource}
-                                         style={[styles.image, styles.wordImage]}
-                                         resizeMode="contain"
-                                     />
-                                     <Text style={styles.letterLabel}>{displayLabel}</Text>
-                                 </AnimatableView>
-                             );
+                            // Render word image (using the mapped 'item' which could be 'ILOVEYOU')
+                            const wordSource = wordImages[item];
+                            const displayLabel = getOriginalWord(item); // Get display text based on output key
+                            return (
+                                <AnimatableView
+                                    key={`word-${item}-${index}`}
+                                    style={[styles.signItem, styles.wordSignItem]}
+                                    {...animationProps}
+                                >
+                                    <Image
+                                        source={wordSource}
+                                        style={[styles.image, styles.wordImage]}
+                                        resizeMode="contain"
+                                    />
+                                    <Text style={styles.letterLabel}>{displayLabel}</Text>
+                                </AnimatableView>
+                            );
                         } else if (signImages[item]) {
-                             // Render letter image
-                             const letterSource = signImages[item];
-                             return (
-                                 <AnimatableView
-                                     key={`letter-${item}-${index}`}
-                                     style={styles.signItem}
-                                     {...animationProps}
-                                 >
-                                     <Image
-                                         source={letterSource}
-                                         style={styles.image}
-                                         resizeMode="contain"
-                                     />
-                                     <Text style={styles.letterLabel}>{item}</Text>
-                                 </AnimatableView>
-                             );
+                            // Render letter image
+                            const letterSource = signImages[item];
+                            return (
+                                <AnimatableView
+                                    key={`letter-${item}-${index}`}
+                                    style={styles.signItem}
+                                    {...animationProps}
+                                >
+                                    <Image
+                                        source={letterSource}
+                                        style={styles.image}
+                                        resizeMode="contain"
+                                    />
+                                    <Text style={styles.letterLabel}>{item}</Text>
+                                </AnimatableView>
+                            );
                         } else {
                             // Should not happen with current logic, but good practice
                             return null;
@@ -432,8 +440,8 @@ const styles = StyleSheet.create({
         height: 50,
     },
     wordImage: {
-       width: 70, // Keep word images potentially larger
-       height: 70,
+        width: 70, // Keep word images potentially larger
+        height: 70,
     },
     letterLabel: {
         fontSize: 14,
@@ -447,6 +455,21 @@ const styles = StyleSheet.create({
         height: 100, // Match height of items for alignment
         // backgroundColor: 'transparent', // Make it invisible
     },
+    clearButton: {
+        marginTop: 10,
+        alignSelf: 'center',
+        backgroundColor: '#E53E3E', // nice red tone
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 10,
+    },
+
+    clearButtonText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontWeight: '600',
+    },
+
 });
 
 export default TextToSign;

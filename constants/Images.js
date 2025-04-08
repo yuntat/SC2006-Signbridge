@@ -12,6 +12,7 @@ const img1 = require("../assets/imgs/img1.jpg");
 const img2 = require("../assets/imgs/img2.png");
 const img3 = require("../assets/imgs/img3.jpg");
 const img4 = require("../assets/imgs/img4.jpg");
+const img5 = require("../assets/imgs/img5.png")
 const livetrans = require("../assets/imgs/livetrans.png");
 const SignBridgeLogoSmall = require("../assets/imgs/logo_signbridge_small.png");
 const HomeIcon = require("../assets/imgs/home.png");
@@ -49,6 +50,7 @@ export default {
   img2,
   img3,
   img4,
+  img5,
   livetrans,
   SignBridgeLogoSmall,
   HomeIcon
