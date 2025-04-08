@@ -18,6 +18,9 @@ import { useNavigation } from '@react-navigation/native';
 
 import * as Animatable from 'react-native-animatable';
 
+import { useTranslation } from 'react-i18next';
+
+
 // Static image map for LETTERS
 const signImages = {
     A: require('../assets/imgs/sign_images/A.png'),
@@ -101,6 +104,8 @@ const getOriginalWord = (outputKey) => {
 
 const TextToSign = () => {
     const navigation = useNavigation();
+    const { t } = useTranslation();
+
     const [inputText, setInputText] = useState('');
     const [outputItems, setOutputItems] = useState([]);
 
@@ -228,22 +233,24 @@ const TextToSign = () => {
                 onPress={handleGoBack}
                 activeOpacity={0.7}
             >
-                <Text style={styles.backButtonText}>{'< Back'}</Text>
+                <Text style={styles.backButtonText}>{t('ui.back')}</Text>
+
             </TouchableOpacity>
 
             <Animatable.Text
-                animation="fadeInDown"
-                duration={800}
-                style={styles.title}
-                >
-                Text to Sign 🤟 Translator
+              animation="fadeInDown"
+              duration={800}
+              style={styles.title}
+            >
+              {t('ui.textToSignTranslator')}
             </Animatable.Text>
+
 
             {/* Input */}
             <AnimatableView animation="fadeInUp" duration={600} delay={200}>
                 <TextInput
                     style={styles.input}
-                    placeholder="Type words like 'HELLO LOVE'" // Updated placeholder
+                    placeholder={t('ui.inputHint')}
                     placeholderTextColor="#A0AEC0"
                     value={inputText}
                     onChangeText={setInputText}
