@@ -14,7 +14,11 @@ function CustomDrawerContent({ navigation, state }) {
   ];
 
   // Get the current route name from navigation state
-  const currentRoute = state.routes[state.index].name;
+  const nestedState = state.routes[state.index].state;
+  const currentRoute = nestedState
+    ? nestedState.routes[nestedState.index].name
+    : state.routes[state.index].name;
+
 
   return (
     <Block style={styles.container}>
