@@ -27,7 +27,15 @@
     "textToSignTranslator": "Text to Sign 🤟 Translator",
     "translate": "Translate",
     "inputHint": "Type words like 'HELLO LOVE'"
-  }
+  },
+ "signToText": {
+      "selectVideo": "Select Video",
+      "changeVideo": "Change Video",
+      "translateVideo": "Translate Video",
+      "translating": "Translating...",
+      "processing": "Processing your video..."
+}
+
 }
 
 
