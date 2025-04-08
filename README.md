@@ -35,12 +35,14 @@ git clone https://github.com/your-username/SC2006-SignLanguageApp.git
 npm install
 ```
 3. Start the application:
+
+- Normal:
 ```
 npx expo start
 ```
-
+- Web View:
 ```
-npx expo start --web  (using web preview)
+npx expo start --web
 ```
 ## 📦 Usage
 - Run the app on your emulator or physical device.
