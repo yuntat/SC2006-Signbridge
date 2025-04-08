@@ -158,8 +158,9 @@ function SignToText() {
                 <Text style={styles.backButtonText}>{t('ui.back')}</Text>
             </TouchableOpacity>
 
-            <Text style={styles.title}>ASL Video Translator</Text>
-            <Text style={styles.subtitle}>Upload a pre-recorded video of Sign Language</Text>
+            <Text style={styles.title}>{t('signToText.title')}</Text>
+            <Text style={styles.subtitle}>{t('signToText.subtitle')}</Text>
+
 
             <View style={styles.uploadArea}>
                 <TouchableOpacity onPress={pickVideo} style={styles.selectButton} disabled={isLoading}>
