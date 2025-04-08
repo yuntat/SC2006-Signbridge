@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import {
-    Button, // We'll replace this with TouchableOpacity for better styling
     Image,
     ScrollView,
     StyleSheet,
     Text,
     TextInput,
     View,
-    TouchableOpacity, // Import TouchableOpacity
-    Platform, // For platform-specific styles like shadows
-    Keyboard, // To dismiss keyboard
+    TouchableOpacity,
+    Platform,
+    Keyboard,
+    Dimensions, // Import Dimensions for potential responsive sizing
 } from 'react-native';
 
-import * as Animatable from 'react-native-animatable'; // Import Animatable
+import * as Animatable from 'react-native-animatable';
 
-// Static image map (remains the same)
+// Static image map for LETTERS
 const signImages = {
     A: require('../assets/imgs/sign_images/A.png'),
     B: require('../assets/imgs/sign_images/B.png'),
@@ -44,20 +44,114 @@ const signImages = {
     Z: require('../assets/imgs/sign_images/Z.png'),
 };
 
-// Create an Animatable View component for easier use
+// --- NEW: Static image map for WORDS ---
+// NOTE: Keys should be uppercase and match the expected processed input.
+// Use a consistent format for multi-word phrases (e.g., no spaces).
+const wordImages = {
+    HELLO: require('../assets/imgs/word_images/HELLO.png'), // Assuming path like this
+    ILOVEYOU: require('../assets/imgs/word_images/ILOVEYOU.png'),
+    NO: require('../assets/imgs/word_images/NO.png'),
+    OK: require('../assets/imgs/word_images/OK.png'),
+    YES: require('../assets/imgs/word_images/YES.png'),
+};
+
+// --- NEW: List of words to check, ordered by length (longest first) ---
+// This is important to match "I LOVE YOU" before "NO" or "I".
+// The keys here should match the keys in wordImages.
+const predefinedWords = ['ILOVEYOU', 'HELLO', 'YES', 'NO', 'OK'];
+
+// Create an Animatable View component
 const AnimatableView = Animatable.createAnimatableComponent(View);
+
+// --- NEW: Helper to get original spacing for display label ---
+const getOriginalWord = (wordKey) => {
+    const map = {
+        ILOVEYOU: 'I LOVE YOU',
+        HELLO: 'HELLO',
+        YES: 'YES',
+        NO: 'NO',
+        OK: 'OK',
+    };
+    return map[wordKey] || wordKey; // Fallback to the key itself
+};
+
 
 const TextToSign = () => {
     const [inputText, setInputText] = useState('');
-    const [letters, setLetters] = useState([]);
+    // --- State now holds letters OR words OR spaces ---
+    const [outputItems, setOutputItems] = useState([]);
 
     const handleTranslate = () => {
-        Keyboard.dismiss(); // Dismiss keyboard on translate
-        const filtered = inputText
-            .toUpperCase()
-            .split('')
-            .filter(char => /[A-Z ]/.test(char)); // allow A-Z and spaces
-        setLetters(filtered); // Set the letters to trigger re-render and animations
+        Keyboard.dismiss();
+        let processedInput = inputText.toUpperCase().trim(); // Uppercase and remove leading/trailing spaces
+        const result = [];
+        let currentIndex = 0;
+
+        while (currentIndex < processedInput.length) {
+            let foundWord = false;
+
+            // --- Check for predefined words (longest first) ---
+            for (const word of predefinedWords) {
+                // Check if the word exists at the current position
+                // Need to handle potential spaces in the original input matching multi-word phrases
+                // Let's simplify: assume input like "I LOVE YOU" will be processed as "ILOVEYOU" after filtering
+                // A more robust solution might involve regex or more complex parsing if spaces *within* phrases matter.
+
+                // Create a simplified version of the substring for matching word keys
+                const substringToCheck = processedInput.substring(currentIndex).replace(/ /g, ''); // Remove spaces for matching keys like "ILOVEYOU"
+
+                if (substringToCheck.startsWith(word)) {
+                    // Find the actual end position in the *original* processedInput string
+                    // This is tricky because of spaces. Let's approximate by consuming characters
+                    // equal to the matched word's key length, skipping spaces.
+                    let consumedLength = 0;
+                    let originalCharsConsumed = 0;
+                    while (consumedLength < word.length && (currentIndex + originalCharsConsumed) < processedInput.length) {
+                        const char = processedInput[currentIndex + originalCharsConsumed];
+                        if (char !== ' ') {
+                            consumedLength++;
+                        }
+                        originalCharsConsumed++;
+                    }
+
+                    result.push(word); // Add the matched word KEY
+                    currentIndex += originalCharsConsumed;
+                    foundWord = true;
+                    break; // Found the longest possible match at this position
+                }
+            }
+
+            // --- If no word matched, process the current character ---
+            if (!foundWord) {
+                const char = processedInput[currentIndex];
+                if (/[A-Z]/.test(char)) {
+                    result.push(char); // Add letter
+                } else if (char === ' ') {
+                    // Add space only if it's not redundant (e.g., not after another space or at the start)
+                    if (result.length > 0 && result[result.length - 1] !== ' ') {
+                         result.push(' '); // Add space marker
+                    }
+                }
+                // Ignore other characters silently
+                currentIndex++;
+            }
+
+             // Skip any immediate subsequent spaces after matching a word or letter
+             while (currentIndex < processedInput.length && processedInput[currentIndex] === ' ') {
+                 // Only add a single space marker if the last item wasn't already a space
+                 if (result.length > 0 && result[result.length - 1] !== ' ') {
+                     result.push(' ');
+                 }
+                currentIndex++;
+            }
+        }
+
+        // Remove trailing space if it exists
+        if (result.length > 0 && result[result.length - 1] === ' ') {
+            result.pop();
+        }
+
+        setOutputItems(result);
     };
 
     return (
@@ -72,12 +166,13 @@ const TextToSign = () => {
             <AnimatableView animation="fadeInUp" duration={600} delay={200}>
                 <TextInput
                     style={styles.input}
-                    placeholder="Type a word like 'HELLO'"
-                    placeholderTextColor="#A0AEC0" // Softer placeholder text
+                    placeholder="Type words like 'HELLO BRUH'"
+                    placeholderTextColor="#A0AEC0"
                     value={inputText}
                     onChangeText={setInputText}
-                    autoCapitalize="characters" // Suggest uppercase
-                    clearButtonMode="while-editing" // iOS clear button
+                    // autoCapitalize="characters" // Keep as none/sentences if users prefer typing naturally
+                    clearButtonMode="while-editing"
+                    autoCorrect={false} // Often useful for this type of input
                 />
             </AnimatableView>
 
@@ -85,56 +180,73 @@ const TextToSign = () => {
                 <TouchableOpacity
                     style={styles.translateButton}
                     onPress={handleTranslate}
-                    activeOpacity={0.7} // Visual feedback on press
+                    activeOpacity={0.7}
                 >
                     <Text style={styles.translateButtonText}>Translate</Text>
                 </TouchableOpacity>
             </AnimatableView>
 
-            {/* Only show ScrollView if there are letters to display */}
-            {letters.length > 0 && (
+            {outputItems.length > 0 && (
                 <ScrollView
                     contentContainerStyle={styles.imageContainer}
-                    showsVerticalScrollIndicator={false} // Hide scrollbar if not needed
+                    showsVerticalScrollIndicator={false}
                 >
-                    {letters.map((letter, index) => {
-                        // Animation properties for each item
+                    {outputItems.map((item, index) => {
                         const animationProps = {
-                            animation: 'zoomIn', // Entrance animation
+                            animation: 'zoomIn',
                             duration: 400,
-                            delay: index * 100, // Staggered appearance
-                            useNativeDriver: true, // Better performance
+                            delay: index * 100,
+                            useNativeDriver: true,
                         };
 
-                        if (letter === ' ') {
-                            // Render a space visually
+                        if (item === ' ') {
+                            // Render a visual space
                             return (
                                 <AnimatableView
                                     key={`space-${index}`}
                                     style={styles.space}
-                                    {...animationProps} // Apply animation
+                                    {...animationProps}
                                 />
                             );
+                        } else if (wordImages[item]) {
+                            // --- Render WORD ---
+                             const wordSource = wordImages[item];
+                             const displayLabel = getOriginalWord(item); // Get "I LOVE YOU" from "ILOVEYOU"
+                             return (
+                                 <AnimatableView
+                                     key={`word-${item}-${index}`}
+                                     style={[styles.signItem, styles.wordSignItem]} // Optional: specific style for words
+                                     {...animationProps}
+                                 >
+                                     <Image
+                                         source={wordSource}
+                                         style={[styles.image, styles.wordImage]} // Optional: specific style for word images
+                                         resizeMode="contain"
+                                     />
+                                     <Text style={styles.letterLabel}>{displayLabel}</Text>
+                                 </AnimatableView>
+                             );
+                        } else if (signImages[item]) {
+                             // --- Render LETTER ---
+                             const letterSource = signImages[item];
+                             return (
+                                 <AnimatableView
+                                     key={`letter-${item}-${index}`}
+                                     style={styles.signItem}
+                                     {...animationProps}
+                                 >
+                                     <Image
+                                         source={letterSource}
+                                         style={styles.image}
+                                         resizeMode="contain"
+                                     />
+                                     <Text style={styles.letterLabel}>{item}</Text>
+                                 </AnimatableView>
+                             );
+                        } else {
+                            // Fallback for unexpected items (shouldn't happen with current logic)
+                            return null;
                         }
-
-                        // Check if image exists, provide fallback? (Optional)
-                        const imageSource = signImages[letter];
-                        if (!imageSource) return null; // Skip if no image found
-
-                        return (
-                            <AnimatableView
-                                key={`${letter}-${index}`}
-                                style={styles.signItem}
-                                {...animationProps} // Apply animation
-                            >
-                                <Image
-                                    source={imageSource}
-                                    style={styles.image}
-                                    resizeMode="contain"
-                                />
-                                <Text style={styles.letterLabel}>{letter}</Text>
-                            </AnimatableView>
-                        );
                     })}
                 </ScrollView>
             )}
@@ -142,94 +254,100 @@ const TextToSign = () => {
     );
 };
 
+// --- Styles (Consider adjusting sizes for words) ---
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 25,
-        backgroundColor: '#EBF4FF', // Lighter, softer blue background
+        backgroundColor: '#EBF4FF',
     },
     title: {
-        fontSize: 28, // Slightly larger title
+        fontSize: 28,
         fontWeight: 'bold',
-        marginTop: 20, // Add some space at the top
+        marginTop: Platform.OS === 'ios' ? 40 : 20, // Adjust top margin for safe area
         marginBottom: 30,
         textAlign: 'center',
-        color: '#2C5282', // Darker blue for contrast
+        color: '#2C5282',
     },
     input: {
         backgroundColor: '#FFFFFF',
         borderWidth: 1,
-        borderColor: '#E2E8F0', // Lighter border
-        borderRadius: 12, // More rounded corners
+        borderColor: '#E2E8F0',
+        borderRadius: 12,
         paddingVertical: 15,
         paddingHorizontal: 18,
         fontSize: 18,
         marginBottom: 15,
         color: '#2D3748',
-        // Shadow for depth (iOS)
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
-        // Shadow for depth (Android)
         elevation: 3,
     },
     translateButton: {
-        backgroundColor: '#AD03DE', // A vibrant blue
+        backgroundColor: '#AD03DE', // Kept your purple color
         paddingVertical: 16,
-        borderRadius: 12, // Consistent rounding
+        borderRadius: 12,
         alignItems: 'center',
         marginBottom: 25,
-        // Shadow for depth (iOS)
         shadowColor: '#2C5282',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 5,
-        // Shadow for depth (Android)
         elevation: 5,
     },
     translateButtonText: {
         color: '#FFFFFF',
         fontSize: 18,
-        fontWeight: '600', // Medium weight
+        fontWeight: '600',
     },
     imageContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'center',
-        paddingBottom: 20, // Add padding at the bottom of scroll
-        gap: 15, // Increased gap for better spacing
+        paddingBottom: 20,
+        gap: 15,
+        alignItems: 'flex-start', // Align items to the top if heights vary
     },
-    signItem: {
+    signItem: { // Base style for both letters and words
         alignItems: 'center',
-        backgroundColor: '#FFFFFF', // White background for cards
+        backgroundColor: '#FFFFFF',
         borderRadius: 10,
         padding: 10,
-        width: 80, // Fixed width for consistency
-        height: 100, // Fixed height
-        justifyContent: 'center',
-        // Shadow (iOS)
+        width: 85, // Slightly wider to potentially accommodate word labels
+        minHeight: 100, // Use minHeight instead of height if word labels wrap
+        justifyContent: 'space-between', // Pushes label down
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.08,
         shadowRadius: 3,
-        // Shadow (Android)
         elevation: 2,
     },
-    image: {
-        width: 50, // Slightly smaller image to fit padding
+    wordSignItem: { // Specific overrides for word items if needed
+       width: 110, // Words might need more width
+       // minHeight: 120, // And more height?
+    },
+    image: { // Base image style
+        width: 50,
         height: 50,
-        marginBottom: 8, // Space between image and label
+        // marginBottom: 8, // Removed, using justifycontent space-between now
+    },
+    wordImage: { // Specific overrides for word images if needed
+       width: 70, // Make word images larger?
+       height: 70,
     },
     letterLabel: {
-        fontSize: 16,
-        fontWeight: 'bold', // Bolder label
-        color: '#4A5568', // Slightly darker grey
+        fontSize: 14, // Adjusted size slightly
+        fontWeight: 'bold',
+        color: '#4A5568',
+        marginTop: 8, // Add margin top since marginBottom removed from image
+        textAlign: 'center', // Center label text if it wraps
     },
     space: {
-        width: 40, // A slightly wider space visually
-        height: 100, // Match height of sign items
-        marginHorizontal: -5, // Adjust spacing if needed with gap
+        width: 40, // Visual width of a space
+        height: 100, // Match minHeight of sign items
+        // No background or visual elements needed unless desired
     },
 });
 
