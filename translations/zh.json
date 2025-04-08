@@ -35,13 +35,16 @@
     "translate": "翻译",
     "inputHint": "输入如“你好 爱”这样的词语"
   },
-  "signToText": {
-    "selectVideo": "选择视频",
-    "changeVideo": "更换视频",
-    "translateVideo": "翻译视频",
-    "translating": "正在翻译...",
-    "processing": "正在处理您的视频..."
+ "signToText": {
+  "title": "手语视频翻译器",
+  "subtitle": "上传预录的手语视频",
+  "selectVideo": "选择视频",
+  "changeVideo": "更换视频",
+  "translateVideo": "翻译视频",
+  "translating": "正在翻译...",
+  "processing": "正在处理您的视频..."
 }
+
 
 }
 
