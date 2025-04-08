@@ -23,6 +23,17 @@ jobs:
       - name: Build static files using Expo
         run: npx expo export --platform web --output-dir dist
 
+      - name: Start Python backend on Azure VM
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            pkill -f app.py || true
+            cd ~/signbridge-backend
+            nohup python3 app.py > backend.log 2>&1 &
+
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
@@ -30,4 +41,4 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "dist"
-          output_location: "" # Already prebuilt
+          output_location: ""
