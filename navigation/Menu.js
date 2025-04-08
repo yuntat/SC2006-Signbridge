@@ -49,15 +49,7 @@ function CustomDrawerContent({ navigation, state }) {
             );
           })}
 
-          <Block style={styles.sectionDivider}>
-            <View style={styles.divider} />
-            <Text style={styles.sectionTitle}>DOCUMENTATION</Text>
-          </Block>
-
-          <Block style={styles.menuItem}>
-            <Image source={Images.docIcon} style={styles.icon} />
-            <DrawerCustomItem title="Getting Started" navigation={navigation} />
-          </Block>
+         
         </ScrollView>
       </Block>
     </Block>
