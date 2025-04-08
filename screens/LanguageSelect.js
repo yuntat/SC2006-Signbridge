@@ -40,15 +40,16 @@ const LanguageSelect = ({ navigation }) => {
 
         <View style={styles.buttonContainer}>
           <Button 
-            title="English" 
+            title={t('language.english')} 
             onPress={() => changeLanguage('en')} 
             color={argonTheme.COLORS.PRIMARY}
           />
           <Button 
-            title="Chinese" 
+            title={t('language.chinese')} 
             onPress={() => changeLanguage('zh')} 
             color={argonTheme.COLORS.PRIMARY}
           />
+
         </View>
       </View>
     </ImageBackground>
