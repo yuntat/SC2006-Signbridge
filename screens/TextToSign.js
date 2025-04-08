@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
     Image,
+    Keyboard,
+    Platform,
     ScrollView,
     StyleSheet,
     Text,
     TextInput,
-    View,
     TouchableOpacity,
-    Platform,
-    Keyboard,
-    Dimensions, // Import Dimensions for potential responsive sizing
+    View,
 } from 'react-native';
 
 import * as Animatable from 'react-native-animatable';
@@ -129,19 +128,25 @@ const TextToSign = () => {
                 } else if (char === ' ') {
                     // Add space only if it's not redundant (e.g., not after another space or at the start)
                     if (result.length > 0 && result[result.length - 1] !== ' ') {
-                         result.push(' '); // Add space marker
+                        result.push(' '); // Add space marker
                     }
                 }
                 // Ignore other characters silently
                 currentIndex++;
             }
+import { StyleSheet, TextInput, View, ImageBackground, useWindowDimensions } from 'react-native';
+import { Block, Button, Text } from 'galio-framework';
+import { Images, argonTheme } from '../constants';
+import { useTranslation } from 'react-i18next';
+import { MaterialIcons } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
-             // Skip any immediate subsequent spaces after matching a word or letter
-             while (currentIndex < processedInput.length && processedInput[currentIndex] === ' ') {
-                 // Only add a single space marker if the last item wasn't already a space
-                 if (result.length > 0 && result[result.length - 1] !== ' ') {
-                     result.push(' ');
-                 }
+            // Skip any immediate subsequent spaces after matching a word or letter
+            while (currentIndex < processedInput.length && processedInput[currentIndex] === ' ') {
+                // Only add a single space marker if the last item wasn't already a space
+                if (result.length > 0 && result[result.length - 1] !== ' ') {
+                    result.push(' ');
+                }
                 currentIndex++;
             }
         }
@@ -156,12 +161,20 @@ const TextToSign = () => {
 
     return (
         <View style={styles.container}>
+              <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.navigate('SignBridgeMain')}
+            >
+              <MaterialIcons name="arrow-back" size={24} color={argonTheme.COLORS.PRIMARY} />
+              <Text style={styles.backText}>{t('backToHome')}</Text>
+            </TouchableOpacity>
             <Animatable.Text
                 animation="fadeInDown"
                 duration={800}
                 style={styles.title}>
                 Text to Sign 🤟 Translator
             </Animatable.Text>
+
 
             <AnimatableView animation="fadeInUp" duration={600} delay={200}>
                 <TextInput
@@ -210,39 +223,39 @@ const TextToSign = () => {
                             );
                         } else if (wordImages[item]) {
                             // --- Render WORD ---
-                             const wordSource = wordImages[item];
-                             const displayLabel = getOriginalWord(item); // Get "I LOVE YOU" from "ILOVEYOU"
-                             return (
-                                 <AnimatableView
-                                     key={`word-${item}-${index}`}
-                                     style={[styles.signItem, styles.wordSignItem]} // Optional: specific style for words
-                                     {...animationProps}
-                                 >
-                                     <Image
-                                         source={wordSource}
-                                         style={[styles.image, styles.wordImage]} // Optional: specific style for word images
-                                         resizeMode="contain"
-                                     />
-                                     <Text style={styles.letterLabel}>{displayLabel}</Text>
-                                 </AnimatableView>
-                             );
+                            const wordSource = wordImages[item];
+                            const displayLabel = getOriginalWord(item); // Get "I LOVE YOU" from "ILOVEYOU"
+                            return (
+                                <AnimatableView
+                                    key={`word-${item}-${index}`}
+                                    style={[styles.signItem, styles.wordSignItem]} // Optional: specific style for words
+                                    {...animationProps}
+                                >
+                                    <Image
+                                        source={wordSource}
+                                        style={[styles.image, styles.wordImage]} // Optional: specific style for word images
+                                        resizeMode="contain"
+                                    />
+                                    <Text style={styles.letterLabel}>{displayLabel}</Text>
+                                </AnimatableView>
+                            );
                         } else if (signImages[item]) {
-                             // --- Render LETTER ---
-                             const letterSource = signImages[item];
-                             return (
-                                 <AnimatableView
-                                     key={`letter-${item}-${index}`}
-                                     style={styles.signItem}
-                                     {...animationProps}
-                                 >
-                                     <Image
-                                         source={letterSource}
-                                         style={styles.image}
-                                         resizeMode="contain"
-                                     />
-                                     <Text style={styles.letterLabel}>{item}</Text>
-                                 </AnimatableView>
-                             );
+                            // --- Render LETTER ---
+                            const letterSource = signImages[item];
+                            return (
+                                <AnimatableView
+                                    key={`letter-${item}-${index}`}
+                                    style={styles.signItem}
+                                    {...animationProps}
+                                >
+                                    <Image
+                                        source={letterSource}
+                                        style={styles.image}
+                                        resizeMode="contain"
+                                    />
+                                    <Text style={styles.letterLabel}>{item}</Text>
+                                </AnimatableView>
+                            );
                         } else {
                             // Fallback for unexpected items (shouldn't happen with current logic)
                             return null;
@@ -256,6 +269,9 @@ const TextToSign = () => {
 
 // --- Styles (Consider adjusting sizes for words) ---
 const styles = StyleSheet.create({
+    backgroundImage: {
+        flex: 1
+    },
     container: {
         flex: 1,
         padding: 25,
@@ -280,7 +296,7 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         color: '#2D3748',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
@@ -292,7 +308,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 25,
         shadowColor: '#2C5282',
-        shadowOffset: { width: 0, height: 4 },
+        shadowOffset: {width: 0, height: 4},
         shadowOpacity: 0.3,
         shadowRadius: 5,
         elevation: 5,
@@ -319,14 +335,14 @@ const styles = StyleSheet.create({
         minHeight: 100, // Use minHeight instead of height if word labels wrap
         justifyContent: 'space-between', // Pushes label down
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
+        shadowOffset: {width: 0, height: 1},
         shadowOpacity: 0.08,
         shadowRadius: 3,
         elevation: 2,
     },
     wordSignItem: { // Specific overrides for word items if needed
-       width: 110, // Words might need more width
-       // minHeight: 120, // And more height?
+        width: 110, // Words might need more width
+        // minHeight: 120, // And more height?
     },
     image: { // Base image style
         width: 50,
@@ -334,8 +350,8 @@ const styles = StyleSheet.create({
         // marginBottom: 8, // Removed, using justifycontent space-between now
     },
     wordImage: { // Specific overrides for word images if needed
-       width: 70, // Make word images larger?
-       height: 70,
+        width: 70, // Make word images larger?
+        height: 70,
     },
     letterLabel: {
         fontSize: 14, // Adjusted size slightly
@@ -349,6 +365,17 @@ const styles = StyleSheet.create({
         height: 100, // Match minHeight of sign items
         // No background or visual elements needed unless desired
     },
+    backButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 15,
+        paddingVertical: 5
+    },
+    backText: {
+        marginLeft: 5,
+        color: argonTheme.COLORS.PRIMARY,
+        fontSize: 16
+    }
 });
 
 export default TextToSign;

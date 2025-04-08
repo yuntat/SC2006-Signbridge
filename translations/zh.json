@@ -2,5 +2,20 @@
     "welcome": "欢迎",
     "startTranslation": "开始翻译",
     "toggleCamera": "切换摄像头",
-    "changeLanguage": "选择语言"
+    "changeLanguage": "选择语言",
+    "turnOffCamera": "关闭相机",
+    "turnOnCamera": "打开相机",
+    "liveVideoTranslation": "实时视频翻译",
+    "buttons": {
+      "livevideo": "实时视频翻译",
+      "preRecordedVideo": "上传预录视频",
+      "texttosign": "文本到手语",
+      "languageselect": "语言选择"
+    },
+    "textToSign": {
+      "title": "文本到手语",
+      "inputPlaceholder": "在此输入您的文本...",
+      "convertButton": "转换",
+      "outputPlaceholder": "手语输出将显示在这里"
+    }
   }

@@ -2,37 +2,39 @@ import React from 'react';
 import { ImageBackground, StyleSheet, useWindowDimensions, Image } from 'react-native';
 import { Block, Button, Text, theme } from 'galio-framework';
 import { Images, argonTheme } from '../constants';
+import { useTranslation } from 'react-i18next';
 
 const SignBridgeMain = ({ navigation }) => {
+  const { t } = useTranslation();
+  const { height, width } = useWindowDimensions();
+  const imageSize = Math.min(width, height) * 0.3;
+
   const buttons = [
     { 
       id: 1, 
       image: Images.img1, 
-      text: 'Live Video Translation',
+      text: t('buttons.livevideo'),
       onPress: () => navigation.navigate('LiveTrans') 
     },
     { 
       id: 2, 
       image: Images.img2, 
-      text: 'Pre-Recorded Video Upload',
+      text: t('buttons.preRecordedVideo'),
       onPress: () => console.log('Pre-Recorded pressed')
     },
     { 
       id: 3, 
       image: Images.img3, 
-      text: 'Text-to-Sign',
+      text: t('buttons.texttosign'),
       onPress: () => navigation.navigate('TextToSign')
     },
     { 
       id: 4, 
       image: Images.img4, 
-      text: 'Language Selection',
+      text: t('buttons.languageselect'),
       onPress: () => navigation.navigate('LanguageSelect') 
     },
   ];
-
-  const { height, width } = useWindowDimensions();
-  const imageSize = Math.min(width, height) * 0.3; // Responsive image size
 
   return (
     <Block flex style={styles.container}>
