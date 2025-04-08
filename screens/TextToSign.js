@@ -267,7 +267,7 @@ const TextToSign = () => {
                     onPress={handleTranslate}
                     activeOpacity={0.7}
                 >
-                    <Text style={styles.translateButtonText}>Translate</Text>
+                    <Text style={styles.translateButtonText}>{t('ui.translate')}</Text>
                 </TouchableOpacity>
             </AnimatableView>
 
