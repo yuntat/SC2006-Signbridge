@@ -18,7 +18,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import * as Animatable from 'react-native-animatable';
 
-// Static image map for LETTERS (remains the same)
+// Static image map for LETTERS
 const signImages = {
     A: require('../assets/imgs/sign_images/A.png'),
     B: require('../assets/imgs/sign_images/B.png'),
@@ -48,136 +48,212 @@ const signImages = {
     Z: require('../assets/imgs/sign_images/Z.png'),
 };
 
-// Static image map for WORDS (remains the same)
+// Static image map for WORDS
 const wordImages = {
     HELLO: require('../assets/imgs/word_images/HELLO.png'),
-    ILOVEYOU: require('../assets/imgs/word_images/ILOVEYOU.png'),
+    ILOVEYOU: require('../assets/imgs/word_images/ILOVEYOU.png'), // This is the target image
     NO: require('../assets/imgs/word_images/NO.png'),
     OK: require('../assets/imgs/word_images/OK.png'),
     YES: require('../assets/imgs/word_images/YES.png'),
 };
 
-// List of words to check (remains the same)
-const predefinedWords = ['ILOVEYOU', 'HELLO', 'YES', 'NO', 'OK'];
+// --- MODIFIED: Define patterns to check and their mapping ---
+// Order matters: Check longer/more specific patterns first
+const patternsToCheck = [
+    'I LOVE YOU', // Original full phrase
+    'I LOVE',     // New variation
+    'LOVE',       // New variation
+    'HELLO',
+    'YES',
+    'NO',
+    'OK',
+];
 
-// Create an Animatable View component (remains the same)
+// Map the recognized patterns (from patternsToCheck) to the output key used in wordImages
+const patternToOutputKeyMap = {
+    'I LOVE YOU': 'ILOVEYOU',
+    'I LOVE': 'ILOVEYOU',
+    'LOVE': 'ILOVEYOU',
+    'HELLO': 'HELLO',
+    'YES': 'YES',
+    'NO': 'NO',
+    'OK': 'OK',
+};
+// --- END MODIFICATION ---
+
+
+// Create an Animatable View component
 const AnimatableView = Animatable.createAnimatableComponent(View);
 
-// Helper to get original spacing (remains the same)
-const getOriginalWord = (wordKey) => {
+// Helper to get original spacing (adjusted for the mapping)
+const getOriginalWord = (outputKey) => {
+    // This map now uses the OUTPUT KEY to find the display text
     const map = {
-        ILOVEYOU: 'I LOVE YOU',
+        ILOVEYOU: 'I LOVE YOU', // Always display the full phrase for the ILOVEYOU image
         HELLO: 'HELLO',
         YES: 'YES',
         NO: 'NO',
         OK: 'OK',
     };
-    return map[wordKey] || wordKey;
+    return map[outputKey] || outputKey; // Fallback to the key itself if not found
 };
 
 
 const TextToSign = () => {
-    // --- NEW: Get navigation object ---
     const navigation = useNavigation();
-
     const [inputText, setInputText] = useState('');
     const [outputItems, setOutputItems] = useState([]);
 
     const handleTranslate = () => {
-        // (Translation logic remains the same as previous version)
         Keyboard.dismiss();
-        let processedInput = inputText.toUpperCase().trim();
+        let processedInput = inputText.toUpperCase().trim(); // Keep original spaces for accurate consumption
         const result = [];
         let currentIndex = 0;
 
         while (currentIndex < processedInput.length) {
             let foundWord = false;
 
-            for (const word of predefinedWords) {
-                const substringToCheck = processedInput.substring(currentIndex).replace(/ /g, '');
-                if (substringToCheck.startsWith(word)) {
-                    let consumedLength = 0;
+            // --- MODIFIED: Iterate through patterns to check ---
+            for (const pattern of patternsToCheck) {
+                // Prepare the pattern and the input substring for comparison (remove spaces)
+                const patternNoSpaces = pattern.replace(/ /g, '');
+                // Create a representation of the input *from the current index* with spaces removed
+                // This is just for the 'startsWith' check, not for consumption calculation
+                let inputSubstringNoSpaces = '';
+                let tempIndex = currentIndex;
+                let charsToFormPattern = 0; // How many non-space chars needed for the pattern
+                while(tempIndex < processedInput.length && charsToFormPattern < patternNoSpaces.length) {
+                    const char = processedInput[tempIndex];
+                    if (char !== ' ') {
+                        inputSubstringNoSpaces += char;
+                        charsToFormPattern++;
+                    }
+                    tempIndex++;
+                }
+
+                // Check if the space-removed input substring starts with the space-removed pattern
+                if (inputSubstringNoSpaces === patternNoSpaces) {
+                    // Match found! Now calculate how many *original* characters were consumed
                     let originalCharsConsumed = 0;
-                    while (consumedLength < word.length && (currentIndex + originalCharsConsumed) < processedInput.length) {
-                        const char = processedInput[currentIndex + originalCharsConsumed];
+                    let nonSpaceCharsMatched = 0;
+                    let tempConsumeIndex = currentIndex;
+
+                    while (tempConsumeIndex < processedInput.length && nonSpaceCharsMatched < patternNoSpaces.length) {
+                        const char = processedInput[tempConsumeIndex];
                         if (char !== ' ') {
-                            consumedLength++;
+                            nonSpaceCharsMatched++;
                         }
                         originalCharsConsumed++;
+                        tempConsumeIndex++;
                     }
-                    result.push(word);
-                    currentIndex += originalCharsConsumed;
+
+                    // Get the correct output key from the map
+                    const outputKey = patternToOutputKeyMap[pattern];
+                    result.push(outputKey); // Push the mapped output key (e.g., 'ILOVEYOU')
+                    currentIndex += originalCharsConsumed; // Advance index by consumed characters
                     foundWord = true;
-                    break;
+                    break; // Stop checking other patterns once a match is found
                 }
             }
+            // --- END MODIFICATION ---
+
 
             if (!foundWord) {
+                // If no pattern was matched, process character by character
                 const char = processedInput[currentIndex];
                 if (/[A-Z]/.test(char)) {
+                    // Check if the character is part of any *potential* word pattern starting here
+                    // to avoid breaking words like "BELOVED" into "B E ILOVEYOU D"
+                    let potentialWordMatch = false;
+                    for (const pattern of patternsToCheck) {
+                        const patternNoSpaces = pattern.replace(/ /g, '');
+                         // Check if the remaining input *could* start a pattern (ignoring spaces)
+                        let remainingInputCheck = '';
+                        let tempCheckIndex = currentIndex;
+                        while(tempCheckIndex < processedInput.length && remainingInputCheck.length < patternNoSpaces.length) {
+                            if (processedInput[tempCheckIndex] !== ' ') {
+                                remainingInputCheck += processedInput[tempCheckIndex];
+                            }
+                            tempCheckIndex++;
+                        }
+                        if (patternNoSpaces.startsWith(remainingInputCheck) && remainingInputCheck.length > 0) {
+                            // If the current char starts a potential pattern, don't treat it as isolated yet
+                           // (This check might be overly complex, the original single char logic might be sufficient)
+                           // Let's simplify - the previous word check should handle most cases. If 'LOVE'
+                           // didn't match before, 'L' should be treated as 'L'.
+                        }
+                    }
+                     // Simplified: just push the letter if no word was found starting at this index
                     result.push(char);
+
                 } else if (char === ' ') {
+                    // Add space only if the previous item wasn't already a space
                     if (result.length > 0 && result[result.length - 1] !== ' ') {
                          result.push(' ');
                     }
                 }
-                currentIndex++;
+                currentIndex++; // Move to the next character
             }
 
+             // Consume any subsequent spaces after finding a word or processing a character
              while (currentIndex < processedInput.length && processedInput[currentIndex] === ' ') {
-                 if (result.length > 0 && result[result.length - 1] !== ' ') {
+                 // Add a single space delimiter if needed
+                 if (result.length > 0 && result[result.length - 1] !== ' ' && !foundWord) { // Add space only if previous wasn't space or a word boundary
                      result.push(' ');
+                 } else if (foundWord && result.length > 0 && result[result.length - 1] !== ' '){
+                     // If we just added a word, ensure there's a space after it if followed by spaces
+                      result.push(' ');
                  }
                 currentIndex++;
             }
-        }
+        } // End while loop
 
+        // Clean up trailing space if any
         if (result.length > 0 && result[result.length - 1] === ' ') {
             result.pop();
         }
         setOutputItems(result);
     };
 
-    // --- NEW: Handler for the back button ---
+
     const handleGoBack = () => {
         navigation.goBack();
-        // Or if you need to ensure it always goes to SignBridgeMain:
-        // navigation.navigate('SignBridgeMain');
     };
 
     return (
         <View style={styles.container}>
-            {/* --- NEW: Back Button --- */}
+            {/* Back Button */}
             <TouchableOpacity
                 style={styles.backButton}
                 onPress={handleGoBack}
                 activeOpacity={0.7}
             >
-                {/* You can replace this Text with an Icon component */}
                 <Text style={styles.backButtonText}>{'< Back'}</Text>
             </TouchableOpacity>
 
             <Animatable.Text
                 animation="fadeInDown"
                 duration={800}
-                style={styles.title} // Adjust title margin if needed due to back button
+                style={styles.title}
                 >
                 Text to Sign 🤟 Translator
             </Animatable.Text>
 
-            {/* (Rest of the components: TextInput, Translate Button, ScrollView remain the same) */}
+            {/* Input */}
             <AnimatableView animation="fadeInUp" duration={600} delay={200}>
                 <TextInput
                     style={styles.input}
-                    placeholder="Type words like 'HELLO BRUH'"
+                    placeholder="Type words like 'HELLO LOVE'" // Updated placeholder
                     placeholderTextColor="#A0AEC0"
                     value={inputText}
                     onChangeText={setInputText}
                     clearButtonMode="while-editing"
                     autoCorrect={false}
+                    autoCapitalize="characters" // Suggest uppercase
                 />
             </AnimatableView>
 
+            {/* Translate Button */}
             <AnimatableView animation="fadeInUp" duration={600} delay={400}>
                 <TouchableOpacity
                     style={styles.translateButton}
@@ -188,11 +264,12 @@ const TextToSign = () => {
                 </TouchableOpacity>
             </AnimatableView>
 
+            {/* Output Area */}
             {outputItems.length > 0 && (
                 <ScrollView
                     contentContainerStyle={styles.imageContainer}
                     showsVerticalScrollIndicator={false}
-                    keyboardShouldPersistTaps="handled" // Dismiss keyboard on scroll tap
+                    keyboardShouldPersistTaps="handled"
                 >
                     {outputItems.map((item, index) => {
                         const animationProps = {
@@ -203,16 +280,18 @@ const TextToSign = () => {
                         };
 
                         if (item === ' ') {
+                            // Render space
                             return (
                                 <AnimatableView
                                     key={`space-${index}`}
                                     style={styles.space}
-                                    {...animationProps}
+                                    {...animationProps} // Animate space for consistency? Optional.
                                 />
                             );
                         } else if (wordImages[item]) {
+                             // Render word image (using the mapped 'item' which could be 'ILOVEYOU')
                              const wordSource = wordImages[item];
-                             const displayLabel = getOriginalWord(item);
+                             const displayLabel = getOriginalWord(item); // Get display text based on output key
                              return (
                                  <AnimatableView
                                      key={`word-${item}-${index}`}
@@ -228,6 +307,7 @@ const TextToSign = () => {
                                  </AnimatableView>
                              );
                         } else if (signImages[item]) {
+                             // Render letter image
                              const letterSource = signImages[item];
                              return (
                                  <AnimatableView
@@ -244,6 +324,7 @@ const TextToSign = () => {
                                  </AnimatableView>
                              );
                         } else {
+                            // Should not happen with current logic, but good practice
                             return null;
                         }
                     })}
@@ -253,32 +334,30 @@ const TextToSign = () => {
     );
 };
 
+// Styles remain the same as in your original code
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0, // Basic safe area for Android status bar
-        paddingHorizontal: 25, // Horizontal padding applied here now
+        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+        paddingHorizontal: 25,
         backgroundColor: '#EBF4FF',
     },
-    // --- NEW: Back Button Styles ---
     backButton: {
-        position: 'absolute', // Position independently
-        top: (Platform.OS === 'android' ? StatusBar.currentHeight : 0) + 15, // Position below status bar
+        position: 'absolute',
+        top: (Platform.OS === 'android' ? StatusBar.currentHeight : 0) + 15,
         left: 15,
-        zIndex: 1, // Ensure it's above other content if needed
-        padding: 10, // Make it easier to tap
+        zIndex: 1,
+        padding: 10,
     },
     backButtonText: {
         fontSize: 18,
-        color: '#2C5282', // Match title color or choose another
+        color: '#2C5282',
         fontWeight: '600',
     },
-    // --- Adjust Title Style ---
     title: {
         fontSize: 28,
         fontWeight: 'bold',
-        // marginTop: Platform.OS === 'ios' ? 40 : 20, // Can remove or reduce this if back button provides spacing
-        marginTop: 50, // Increased top margin to make space below the absolute positioned back button
+        marginTop: 50, // Adjusted for back button
         marginBottom: 30,
         textAlign: 'center',
         color: '#2C5282',
@@ -339,14 +418,14 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     wordSignItem: {
-       width: 110,
+       width: 110, // Keep word signs potentially wider
     },
     image: {
         width: 50,
         height: 50,
     },
     wordImage: {
-       width: 70,
+       width: 70, // Keep word images potentially larger
        height: 70,
     },
     letterLabel: {
@@ -357,8 +436,9 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     space: {
-        width: 40,
-        height: 100,
+        width: 40, // Width of the space visual gap
+        height: 100, // Match height of items for alignment
+        // backgroundColor: 'transparent', // Make it invisible
     },
 });
 
