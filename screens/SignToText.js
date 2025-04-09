@@ -1,27 +1,45 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
 import {
     ActivityIndicator,
     Alert,
     Dimensions,
     Platform,
-    ScrollView,
+    ScrollView, // Keep using ScrollView for content
     StyleSheet,
     Text,
     TouchableOpacity,
-    View
+    View // Keep regular View for non-animated containers if needed
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import {ResizeMode, Video} from 'expo-av';
-import {useNavigation} from '@react-navigation/native';
-import {Ionicons} from '@expo/vector-icons'; // Using Expo's vector icons
+import { ResizeMode, Video } from 'expo-av';
+import { useNavigation, useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect
+import { Ionicons } from '@expo/vector-icons';
 
-const {width} = Dimensions.get('window');
+// Import Reanimated components and hooks
+import Animated, {
+    useSharedValue,
+    useAnimatedStyle,
+    withTiming,
+    withDelay,
+    Easing,
+    interpolate, // Useful for more complex animations
+    Extrapolate,
+} from 'react-native-reanimated';
+
+const { width } = Dimensions.get('window');
+
+// --- Create Animated Components ---
+// We wrap the components we want to animate.
+const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
+const AnimatedView = Animated.View;
+const AnimatedText = Animated.Text;
+// You can even animate the Video component if needed, but let's focus on containers/text first
+// const AnimatedVideo = Animated.createAnimatedComponent(Video);
 
 function SignToText() {
     const { t } = useTranslation();
-    const [selectedVideo, setSelectedVideo] = useState(null); // Stores { uri, name, type }
+    const [selectedVideo, setSelectedVideo] = useState(null);
     const [translationResult, setTranslationResult] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -30,11 +48,93 @@ function SignToText() {
 
     const API_ENDPOINT = 'https://sign-language-model-jqhmm.southeastasia.inference.ml.azure.com/score';
 
-    // Request permissions on component mount (or when needed)
+    // --- Animation Shared Values ---
+    // These values will drive the animations. Initialize them to the 'start' state.
+    const titleOpacity = useSharedValue(0);
+    const titleTranslateY = useSharedValue(30); // Start 30px down
+
+    const subtitleOpacity = useSharedValue(0);
+    const subtitleTranslateY = useSharedValue(30); // Start 30px down
+
+    const uploadAreaOpacity = useSharedValue(0);
+    const uploadAreaScale = useSharedValue(0.9); // Start slightly smaller
+
+    const backButtonOpacity = useSharedValue(0);
+
+    // --- Trigger Animations on Screen Focus ---
+    // useFocusEffect runs every time the screen comes into focus
+    useFocusEffect(
+        React.useCallback(() => {
+            // Define animation timing and easing
+            const timingConfig = {
+                duration: 600,
+                easing: Easing.out(Easing.exp), // Smooth easing out
+            };
+            const delayMs = 150; // Stagger delay
+
+            // Reset values instantly before animating (important for refocus)
+            titleOpacity.value = 0;
+            titleTranslateY.value = 30;
+            subtitleOpacity.value = 0;
+            subtitleTranslateY.value = 30;
+            uploadAreaOpacity.value = 0;
+            uploadAreaScale.value = 0.9;
+            backButtonOpacity.value = 0;
+
+            // Start animations with delays for staggering effect
+            backButtonOpacity.value = withDelay(delayMs * 0, withTiming(1, { duration: 400 })); // Faster fade for utility button
+            titleOpacity.value = withDelay(delayMs * 1, withTiming(1, timingConfig));
+            titleTranslateY.value = withDelay(delayMs * 1, withTiming(0, timingConfig));
+
+            subtitleOpacity.value = withDelay(delayMs * 2, withTiming(1, timingConfig));
+            subtitleTranslateY.value = withDelay(delayMs * 2, withTiming(0, timingConfig));
+
+            uploadAreaOpacity.value = withDelay(delayMs * 3, withTiming(1, { duration: 700 })); // Slightly longer duration for the main block
+            uploadAreaScale.value = withDelay(delayMs * 3, withTiming(1, { duration: 700, easing: Easing.out(Easing.back(1.2)) })); // Add a little overshoot with Easing.back
+
+            // Cleanup function (optional but good practice if needed)
+            return () => {
+                // You could potentially reset animations here if needed when leaving screen,
+                // but useFocusEffect handles the re-triggering on focus well.
+            };
+        }, []) // Empty dependency array ensures this setup runs once per focus mount
+    );
+
+    // --- Animated Styles ---
+    // These styles react to changes in shared values
+    const animatedTitleStyle = useAnimatedStyle(() => {
+        return {
+            opacity: titleOpacity.value,
+            transform: [{ translateY: titleTranslateY.value }],
+        };
+    });
+
+    const animatedSubtitleStyle = useAnimatedStyle(() => {
+        return {
+            opacity: subtitleOpacity.value,
+            transform: [{ translateY: subtitleTranslateY.value }],
+        };
+    });
+
+    const animatedUploadAreaStyle = useAnimatedStyle(() => {
+        return {
+            opacity: uploadAreaOpacity.value,
+            transform: [{ scale: uploadAreaScale.value }],
+        };
+    });
+
+     const animatedBackButtonStyle = useAnimatedStyle(() => {
+        return {
+            opacity: backButtonOpacity.value,
+        };
+    });
+
+
+    // Request permissions (keeping original useEffect for this)
     useEffect(() => {
         (async () => {
             if (Platform.OS !== 'web') {
-                const {status} = await ImagePicker.requestMediaLibraryPermissionsAsync();
+                const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
                 if (status !== 'granted') {
                     Alert.alert('Permission Denied', 'Sorry, we need camera roll permissions to select videos.');
                 }
@@ -43,36 +143,21 @@ function SignToText() {
     }, []);
 
     const pickVideo = async () => {
-        // Reset state before picking a new video
         setSelectedVideo(null);
         setTranslationResult('');
         setError(null);
-
         try {
             let result = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-                allowsEditing: false, // Editing might change format/encoding
-                quality: 0.8, // Adjust quality if needed for faster uploads
+                allowsEditing: false,
+                quality: 0.8,
             });
-
-            // console.log('ImagePicker Result:', JSON.stringify(result, null, 2)); // Debug log
-
             if (!result.canceled && result.assets && result.assets.length > 0) {
                 const videoAsset = result.assets[0];
-
-                // Extract necessary info
                 const uri = videoAsset.uri;
-                // Attempt to get a useful filename
                 let filename = videoAsset.fileName || uri.split('/').pop() || `video-${Date.now()}.mp4`;
-                // Attempt to determine MIME type (fallback needed)
                 let mimeType = videoAsset.mimeType || (filename.includes('.mov') ? 'video/quicktime' : 'video/mp4');
-
-                setSelectedVideo({
-                    uri: uri,
-                    name: filename,
-                    type: mimeType,
-                });
-
+                setSelectedVideo({ uri, name: filename, type: mimeType });
             } else if (!result.canceled) {
                 setError("Could not select video asset.");
             }
@@ -88,56 +173,35 @@ function SignToText() {
             setError('Please select a video file first.');
             return;
         }
-
         setIsLoading(true);
         setError(null);
         setTranslationResult('');
-
         const formData = new FormData();
-
-        // Append the video file for the API
-        // The key 'file' might need to be changed based on API requirements.
         formData.append('file', {
             uri: selectedVideo.uri,
             name: selectedVideo.name,
             type: selectedVideo.type,
         });
-
-        // console.log("Uploading FormData:", selectedVideo); // Debug log
-
         try {
             const response = await fetch(API_ENDPOINT, {
                 method: 'POST',
                 body: formData,
-                headers: {
-                    // 'Content-Type': 'multipart/form-data' // Let fetch set this automatically for FormData
-                },
             });
-
-            // console.log("API Response Status:", response.status); // Debug log
-            const responseText = await response.text(); // Read raw response text for debugging
-            // console.log("API Response Text:", responseText);
-
+            const responseText = await response.text();
             if (!response.ok) {
                 let errorMsg = `API Error: ${response.status}`;
                 try {
-                    const errorData = JSON.parse(responseText); // Try parsing the text as JSON
+                    const errorData = JSON.parse(responseText);
                     errorMsg += ` - ${errorData.message || responseText}`;
-                } catch (e) {
-                    errorMsg += ` - ${responseText}`; // If not JSON, include raw text
-                }
+                } catch (e) { errorMsg += ` - ${responseText}`; }
                 throw new Error(errorMsg);
             }
-
-            // If response is OK, parse the JSON
             const result = JSON.parse(responseText);
-
             if (result && result.translated_text !== undefined) {
                 setTranslationResult(result.translated_text);
             } else {
                 throw new Error("Invalid response format received from API.");
             }
-
         } catch (err) {
             console.error("Upload failed:", err);
             setError(err.message || 'An unexpected error occurred during upload.');
@@ -148,23 +212,42 @@ function SignToText() {
     };
 
     const handleBack = () => {
-        navigation.goBack(); // Go back to the previous screen in the stack
+        navigation.goBack();
     };
 
     return (
-        <ScrollView style={styles.scrollView} contentContainerStyle={styles.container}>
-            <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-                <Ionicons name="arrow-back" size={24} color="#333"/>
-                <Text style={styles.backButtonText}>{t('ui.back')}</Text>
-            </TouchableOpacity>
+        // Use ScrollView for content that might exceed screen height
+        <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.container}
+            showsVerticalScrollIndicator={false} // Hide scrollbar if desired
+        >
+            {/* --- Use Animated Components for Animated Elements --- */}
 
-            <Text style={styles.title}>{t('signToText.title')}</Text>
-            <Text style={styles.subtitle}>{t('signToText.subtitle')}</Text>
+            {/* Animate Back Button */}
+            <AnimatedTouchableOpacity
+                onPress={handleBack}
+                style={[styles.backButton, animatedBackButtonStyle]} // Combine original and animated styles
+            >
+                <Ionicons name="arrow-back" size={24} color="#333" />
+                <AnimatedText style={styles.backButtonText}>{t('ui.back')}</AnimatedText>
+            </AnimatedTouchableOpacity>
 
+            {/* Animate Title */}
+            <AnimatedText style={[styles.title, animatedTitleStyle]}>
+                {t('signToText.title')}
+            </AnimatedText>
 
-            <View style={styles.uploadArea}>
+            {/* Animate Subtitle */}
+            <AnimatedText style={[styles.subtitle, animatedSubtitleStyle]}>
+                {t('signToText.subtitle')}
+            </AnimatedText>
+
+            {/* Animate the whole Upload Area Block */}
+            <AnimatedView style={[styles.uploadArea, animatedUploadAreaStyle]}>
+                {/* Children of AnimatedView don't need separate animation unless desired */}
                 <TouchableOpacity onPress={pickVideo} style={styles.selectButton} disabled={isLoading}>
-                   <Text style={styles.buttonText}>{selectedVideo ? t('signToText.changeVideo') : t('signToText.selectVideo')}</Text>
+                    <Text style={styles.buttonText}>{selectedVideo ? t('signToText.changeVideo') : t('signToText.selectVideo')}</Text>
                 </TouchableOpacity>
 
                 {selectedVideo && (
@@ -173,13 +256,12 @@ function SignToText() {
                     </Text>
                 )}
 
-                {/* Video Preview */}
                 {selectedVideo?.uri && !isLoading && (
                     <View style={styles.videoPreviewContainer}>
                         <Video
                             ref={videoPlayerRef}
                             style={styles.videoPreview}
-                            source={{uri: selectedVideo.uri}}
+                            source={{ uri: selectedVideo.uri }}
                             useNativeControls
                             resizeMode={ResizeMode.CONTAIN}
                             isLooping={false}
@@ -191,7 +273,6 @@ function SignToText() {
                     </View>
                 )}
 
-                {/* Upload/Translate Button */}
                 {selectedVideo && (
                     <TouchableOpacity
                         onPress={handleUpload}
@@ -201,28 +282,29 @@ function SignToText() {
                         <Text style={styles.buttonText}>{isLoading ? t('signToText.translating') : t('signToText.translateVideo')}</Text>
                     </TouchableOpacity>
                 )}
-            </View>
+            </AnimatedView>
 
-            {/* Loading Indicator */}
+            {/* --- Non-Animated Sections (or add fade-in on state change later) --- */}
             {isLoading && (
+                 // You could wrap this in AnimatedView and fade it in when isLoading becomes true
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#3498db"/>
+                    <ActivityIndicator size="large" color="#3498db" />
                     <Text style={styles.loadingText}>{t('signToText.processing')}</Text>
                 </View>
             )}
 
-            {/* Error Display */}
             {error && !isLoading && (
+                 // You could wrap this in AnimatedView and fade it in when error becomes true
                 <View style={[styles.resultArea, styles.error]}>
-                    <Ionicons name="alert-circle-outline" size={24} color="#c62828" style={{marginBottom: 5}}/>
+                    <Ionicons name="alert-circle-outline" size={24} color="#c62828" style={{ marginBottom: 5 }} />
                     <Text style={styles.errorText}>Error: {error}</Text>
                 </View>
             )}
 
-            {/* Result Display */}
             {translationResult && !isLoading && !error && (
+                 // You could wrap this in AnimatedView and fade it in when result becomes true
                 <View style={[styles.resultArea, styles.success]}>
-                    <Ionicons name="checkmark-circle-outline" size={24} color="#1b5e20" style={{marginBottom: 5}}/>
+                    <Ionicons name="checkmark-circle-outline" size={24} color="#1b5e20" style={{ marginBottom: 5 }} />
                     <Text style={styles.resultTitle}>Translation:</Text>
                     <Text style={styles.translationText}>{translationResult}</Text>
                 </View>
@@ -231,32 +313,32 @@ function SignToText() {
     );
 }
 
-// --- Styles ---
+// --- Styles (Keep existing styles, they apply to the base components) ---
 const styles = StyleSheet.create({
     scrollView: {
         flex: 1,
         backgroundColor: '#f0f4f7',
     },
     container: {
-        flexGrow: 1, // Allows content to scroll if it overflows
+        flexGrow: 1,
         alignItems: 'center',
         padding: 20,
-        paddingTop: 60, // Extra padding for custom back button area
+        paddingTop: 80, // Increased top padding to ensure title/subtitle animation space
+        paddingBottom: 50, // Add padding at the bottom too
     },
     backButton: {
         position: 'absolute',
-        top: Platform.OS === 'ios' ? 50 : 30, // Adjust for status bar height
+        top: Platform.OS === 'ios' ? 50 : 30,
         left: 15,
         flexDirection: 'row',
         alignItems: 'center',
         paddingVertical: 8,
         paddingHorizontal: 10,
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        backgroundColor: 'rgba(255, 255, 255, 0.8)', // Make slightly transparent for cool effect
         borderRadius: 20,
-        zIndex: 10, // Ensure it's above other content
-        // Simple shadow for visibility
+        zIndex: 10,
         shadowColor: '#000',
-        shadowOffset: {width: 0, height: 1},
+        shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.2,
         shadowRadius: 2,
         elevation: 3,
@@ -268,43 +350,63 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
     title: {
-        fontSize: 26,
+        fontSize: 28, // Slightly larger
         fontWeight: 'bold',
         color: '#2c3e50',
-        marginBottom: 8,
+        marginBottom: 10, // Adjusted spacing
         textAlign: 'center',
     },
     subtitle: {
-        fontSize: 16,
+        fontSize: 17, // Slightly larger
         color: '#7f8c8d',
-        marginBottom: 30,
+        marginBottom: 35, // Adjusted spacing
         textAlign: 'center',
+        paddingHorizontal: 10, // Prevent long text hitting edges during animation
     },
     uploadArea: {
         width: '100%',
         alignItems: 'center',
-        gap: 15,
+        gap: 15, // Use gap for spacing if supported, otherwise use margins
         marginBottom: 25,
         padding: 20,
-        backgroundColor: 'rgba(255, 255, 255, 0.7)',
-        borderRadius: 10,
+        backgroundColor: '#ffffff', // Solid white background
+        borderRadius: 12, // Slightly more rounded
+         // Add shadow for depth
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.15,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     selectButton: {
         backgroundColor: '#3498db',
         paddingVertical: 14,
         paddingHorizontal: 30,
         borderRadius: 8,
-        width: '80%',
+        width: '90%', // Wider button
         alignItems: 'center',
+        shadowColor: "#000", // Button shadow
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.2,
+        shadowRadius: 1.41,
+        elevation: 2,
     },
     uploadButton: {
         backgroundColor: '#2ecc71',
         paddingVertical: 14,
         paddingHorizontal: 30,
         borderRadius: 8,
-        width: '80%',
+        width: '90%', // Wider button
         alignItems: 'center',
         marginTop: 10,
+         shadowColor: "#000", // Button shadow
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.2,
+        shadowRadius: 1.41,
+        elevation: 2,
     },
     buttonText: {
         color: 'white',
@@ -324,15 +426,15 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     videoPreviewContainer: {
-        width: width * 0.8, // 80% of screen width
-        aspectRatio: 16 / 9, // Standard video aspect ratio
+        width: width * 0.85, // Slightly larger preview
+        aspectRatio: 16 / 9,
         marginTop: 15,
-        backgroundColor: '#e0e0e0', // Placeholder background
+        backgroundColor: '#e0e0e0',
         borderRadius: 8,
-        overflow: 'hidden', // Clip the video to the border radius
+        overflow: 'hidden',
     },
     videoPreview: {
-        flex: 1, // Take up full space of container
+        flex: 1,
     },
     loadingContainer: {
         marginTop: 30,
@@ -352,6 +454,15 @@ const styles = StyleSheet.create({
         width: '95%',
         alignItems: 'center',
         borderWidth: 1,
+        // Add shadow to result/error areas too
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 2.22,
+        elevation: 3,
     },
     error: {
         backgroundColor: '#ffebee',
