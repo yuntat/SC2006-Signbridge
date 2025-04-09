@@ -21,9 +21,7 @@ import { Ionicons } from '@expo/vector-icons'; // Using Expo's vector icons
 
 const { width } = Dimensions.get('window');
 
-// --- IMPORTANT: Replace with your actual Bearer Token ---
-// Ensure there are no extra parentheses or quotes around the token string itself.
-const YOUR_BEARER_TOKEN = 'CTObst2v8eX5trGgKtxkJrcS1d3eys2ZLZ2u0wS9G4S34hYA80YhJQQJ99BDAAAAAAAAAAAAINFRAZML41fs';
+
 // -------------------------------------------------------
 
 function SignToText() {
@@ -35,7 +33,7 @@ function SignToText() {
     const videoPlayerRef = useRef(null);
     const navigation = useNavigation();
 
-    const API_ENDPOINT = 'https://sign-language-model-jqhmm.southeastasia.inference.ml.azure.com/score';
+    const API_ENDPOINT = 'http://signtotext.eastasia.cloudapp.azure.com:8000/predict/';
 
     useEffect(() => {
         (async () => {
@@ -124,20 +122,21 @@ function SignToText() {
             // Send the Blob directly as the body
             // Set the correct Content-Type from the selected video
             // Ensure the Authorization header is correctly formatted
+            const formdata = new FormData()
+            formdata.append('file',videoBlob);
             const response = await fetch(API_ENDPOINT, {
                 method: 'POST',
                 headers: {
                     // Use the MIME type detected during video selection
-                    'Content-Type': selectedVideo.type,
+                    // 'Content-Type': selectedVideo.type,
                     // Correctly formatted Authorization header
-                    'Authorization': `Bearer ${YOUR_BEARER_TOKEN}`,
                     // 'Content-Length' header is usually set automatically by fetch when using a Blob body
                     // If you encounter issues, you might try setting it explicitly:
                     // 'Content-Length': videoBlob.size.toString(),
                     'Access-Control-Allow-Origin' : '*'
                 },
                 // The body is now the raw video data (Blob)
-                body: videoBlob,
+                body: formdata,
             });
              // --- End API Call Modification ---
 
