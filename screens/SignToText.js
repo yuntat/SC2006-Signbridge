@@ -33,7 +33,7 @@ function SignToText() {
     const videoPlayerRef = useRef(null);
     const navigation = useNavigation();
 
-    const API_ENDPOINT = 'https://signtotext.eastasia.cloudapp.azure.com:8000/predict/';
+    const API_ENDPOINT = 'https://signtotext.eastasia.cloudapp.azure.com/predict/';
 
     useEffect(() => {
         (async () => {
