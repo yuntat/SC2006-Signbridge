@@ -129,17 +129,7 @@ function CustomDrawerContent({ navigation, state }) {
             );
           })}
 
-          {/* You can apply similar animation logic to these sections/items too */}
-          <Block style={styles.sectionDivider}>
-            <View style={styles.divider} />
-            <Text style={styles.sectionTitle}>DOCUMENTATION</Text>
-          </Block>
-
-          {/* Example: Animating this item would require adding it to the itemAnimations setup */}
-          <Block style={styles.menuItem}>
-            <Image source={Images.docIcon} style={styles.icon} />
-            <DrawerCustomItem title="Getting Started" navigation={navigation} />
-          </Block>
+         
         </ScrollView>
       </Block>
 

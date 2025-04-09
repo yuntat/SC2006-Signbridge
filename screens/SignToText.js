@@ -1,6 +1,5 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
 import {
     ActivityIndicator,
     Alert,
@@ -13,11 +12,17 @@ import {
     View
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import {ResizeMode, Video} from 'expo-av';
-import {useNavigation} from '@react-navigation/native';
-import {Ionicons} from '@expo/vector-icons'; // Using Expo's vector icons
+import { ResizeMode, Video } from 'expo-av';
+import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons'; // Using Expo's vector icons
+// Import FileSystem if you need more advanced file operations,
+// but fetch().blob() should work for reading the content directly.
+// import * as FileSystem from 'expo-file-system';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
+
+
+// -------------------------------------------------------
 
 function SignToText() {
     const { t } = useTranslation();
@@ -28,22 +33,20 @@ function SignToText() {
     const videoPlayerRef = useRef(null);
     const navigation = useNavigation();
 
-    const API_ENDPOINT = 'https://sign-language-model-jqhmm.southeastasia.inference.ml.azure.com/score';
+    const API_ENDPOINT = 'https://signtotext.eastasia.cloudapp.azure.com/predict/';
 
-    // Request permissions on component mount (or when needed)
     useEffect(() => {
         (async () => {
             if (Platform.OS !== 'web') {
-                const {status} = await ImagePicker.requestMediaLibraryPermissionsAsync();
+                const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
                 if (status !== 'granted') {
-                    Alert.alert('Permission Denied', 'Sorry, we need camera roll permissions to select videos.');
+                    Alert.alert(t('permissions.deniedTitle'), t('permissions.mediaLibraryDenied'));
                 }
             }
         })();
-    }, []);
+    }, [t]); // Add t to dependency array
 
     const pickVideo = async () => {
-        // Reset state before picking a new video
         setSelectedVideo(null);
         setTranslationResult('');
         setError(null);
@@ -51,21 +54,22 @@ function SignToText() {
         try {
             let result = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-                allowsEditing: false, // Editing might change format/encoding
-                quality: 0.8, // Adjust quality if needed for faster uploads
+                allowsEditing: false,
+                quality: 0.8, // Consider if quality reduction impacts model accuracy
             });
-
-            // console.log('ImagePicker Result:', JSON.stringify(result, null, 2)); // Debug log
 
             if (!result.canceled && result.assets && result.assets.length > 0) {
                 const videoAsset = result.assets[0];
-
-                // Extract necessary info
                 const uri = videoAsset.uri;
-                // Attempt to get a useful filename
                 let filename = videoAsset.fileName || uri.split('/').pop() || `video-${Date.now()}.mp4`;
-                // Attempt to determine MIME type (fallback needed)
-                let mimeType = videoAsset.mimeType || (filename.includes('.mov') ? 'video/quicktime' : 'video/mp4');
+                // Ensure a reasonable MIME type is determined
+                let mimeType = videoAsset.mimeType || (filename.toLowerCase().includes('.mov') ? 'video/quicktime' : 'video/mp4');
+                // Fallback if still unsure
+                if (!mimeType || mimeType === 'application/octet-stream') {
+                     mimeType = filename.toLowerCase().includes('.mov') ? 'video/quicktime' : 'video/mp4';
+                     console.warn(`Guessed MIME type based on filename: ${mimeType}`);
+                }
+
 
                 setSelectedVideo({
                     uri: uri,
@@ -73,19 +77,22 @@ function SignToText() {
                     type: mimeType,
                 });
 
-            } else if (!result.canceled) {
-                setError("Could not select video asset.");
+            } else if (result.canceled) {
+                 console.log('Video selection cancelled by user.');
+            }
+             else {
+                setError(t('errors.couldNotSelectVideo'));
             }
         } catch (err) {
             console.error("ImagePicker Error:", err);
-            setError("An error occurred while picking the video.");
-            Alert.alert("Error", "Could not open video library.");
+            setError(t('errors.videoLibraryError'));
+            Alert.alert(t('common.error'), t('errors.videoLibraryError'));
         }
     };
 
     const handleUpload = async () => {
-        if (!selectedVideo || !selectedVideo.uri) {
-            setError('Please select a video file first.');
+        if (!selectedVideo || !selectedVideo.uri || !selectedVideo.type) {
+            setError(t('errors.selectVideoFirst'));
             return;
         }
 
@@ -93,54 +100,85 @@ function SignToText() {
         setError(null);
         setTranslationResult('');
 
-        const formData = new FormData();
-
-        // Append the video file for the API
-        // The key 'file' might need to be changed based on API requirements.
-        formData.append('file', {
-            uri: selectedVideo.uri,
-            name: selectedVideo.name,
-            type: selectedVideo.type,
-        });
-
-        // console.log("Uploading FormData:", selectedVideo); // Debug log
-
         try {
+            // --- MODIFICATION START: Read file content as Blob ---
+            // 1. Fetch the local video file URI
+            const fileResponse = await fetch(selectedVideo.uri);
+            if (!fileResponse.ok) {
+                 throw new Error(`Failed to fetch local video file: ${fileResponse.status} ${fileResponse.statusText}`);
+            }
+            // 2. Get the content as a Blob
+            const videoBlob = await fileResponse.blob();
+             // console.log(`Fetched video as Blob. Size: ${videoBlob.size}, Type: ${videoBlob.type}`); // Debug log
+
+            // Check if blob size is reasonable (optional)
+            if (videoBlob.size === 0) {
+                 throw new Error("Selected video file appears to be empty.");
+            }
+            // --- MODIFICATION END ---
+
+
+            // --- API Call Modification ---
+            // Send the Blob directly as the body
+            // Set the correct Content-Type from the selected video
+            // Ensure the Authorization header is correctly formatted
+            const formdata = new FormData()
+            formdata.append('file',videoBlob);
             const response = await fetch(API_ENDPOINT, {
                 method: 'POST',
-                body: formData,
                 headers: {
-                    // 'Content-Type': 'multipart/form-data' // Let fetch set this automatically for FormData
+                    // Use the MIME type detected during video selection
+                    // 'Content-Type': selectedVideo.type,
+                    // Correctly formatted Authorization header
+                    // 'Content-Length' header is usually set automatically by fetch when using a Blob body
+                    // If you encounter issues, you might try setting it explicitly:
+                    // 'Content-Length': videoBlob.size.toString(),
+                    'Access-Control-Allow-Origin' : '*'
                 },
+                // The body is now the raw video data (Blob)
+                body: formdata,
             });
+             // --- End API Call Modification ---
 
-            // console.log("API Response Status:", response.status); // Debug log
-            const responseText = await response.text(); // Read raw response text for debugging
+
+            // console.log("API Response Status:", response.status);
+            const responseText = await response.text();
             // console.log("API Response Text:", responseText);
 
             if (!response.ok) {
                 let errorMsg = `API Error: ${response.status}`;
                 try {
-                    const errorData = JSON.parse(responseText); // Try parsing the text as JSON
-                    errorMsg += ` - ${errorData.message || responseText}`;
+                    // Try to parse error from backend if JSON
+                    const errorData = JSON.parse(responseText);
+                    errorMsg += ` - ${errorData.error || errorData.message || responseText}`;
                 } catch (e) {
-                    errorMsg += ` - ${responseText}`; // If not JSON, include raw text
+                    // Otherwise, use the raw text
+                    errorMsg += ` - ${responseText}`;
                 }
                 throw new Error(errorMsg);
             }
 
-            // If response is OK, parse the JSON
+            // Parse the successful JSON response
             const result = JSON.parse(responseText);
 
             if (result && result.translated_text !== undefined) {
                 setTranslationResult(result.translated_text);
             } else {
-                throw new Error("Invalid response format received from API.");
+                // Handle cases where backend returns 200 OK but not the expected data
+                 console.warn("API response OK, but 'translated_text' field missing:", result);
+                 throw new Error(t('errors.invalidApiResponseFormat'));
             }
 
         } catch (err) {
-            console.error("Upload failed:", err);
-            setError(err.message || 'An unexpected error occurred during upload.');
+            console.error("Upload/Processing failed:", err);
+            // Provide more specific error messages if possible
+            let displayError = err.message || t('errors.unexpectedUploadError');
+             if (err.message && err.message.includes('Failed to fetch local video file')) {
+                 displayError = t('errors.readFileError');
+             } else if (err.message && err.message.includes('Network request failed')) {
+                 displayError = t('errors.networkRequestFailed', { endpoint: API_ENDPOINT });
+             }
+            setError(displayError);
             setTranslationResult('');
         } finally {
             setIsLoading(false);
@@ -148,8 +186,28 @@ function SignToText() {
     };
 
     const handleBack = () => {
-        navigation.goBack(); // Go back to the previous screen in the stack
+        navigation.goBack();
     };
+
+    // Add some placeholder translations if not already present
+    // Example in your i18n setup:
+    // "permissions": {
+    //   "deniedTitle": "Permission Denied",
+    //   "mediaLibraryDenied": "Sorry, we need camera roll permissions to select videos."
+    // },
+    // "errors": {
+    //    "couldNotSelectVideo": "Could not select video asset.",
+    //    "videoLibraryError": "An error occurred while opening the video library.",
+    //    "selectVideoFirst": "Please select a video file first.",
+    //    "invalidApiResponseFormat": "Invalid response format received from API.",
+    //    "unexpectedUploadError": "An unexpected error occurred during upload/processing.",
+    //    "readFileError": "Could not read the selected video file.",
+    //    "networkRequestFailed": "Network request failed. Please check your connection and the API endpoint ({{endpoint}})."
+    // },
+    // "common": {
+    //   "error": "Error"
+    // }
+
 
     return (
         <ScrollView style={styles.scrollView} contentContainerStyle={styles.container}>
@@ -161,7 +219,6 @@ function SignToText() {
             <Text style={styles.title}>{t('signToText.title')}</Text>
             <Text style={styles.subtitle}>{t('signToText.subtitle')}</Text>
 
-
             <View style={styles.uploadArea}>
                 <TouchableOpacity onPress={pickVideo} style={styles.selectButton} disabled={isLoading}>
                    <Text style={styles.buttonText}>{selectedVideo ? t('signToText.changeVideo') : t('signToText.selectVideo')}</Text>
@@ -169,11 +226,10 @@ function SignToText() {
 
                 {selectedVideo && (
                     <Text style={styles.fileName} numberOfLines={1} ellipsizeMode="middle">
-                        Selected: {selectedVideo.name}
+                        Selected: {selectedVideo.name} ({selectedVideo.type}) {/* Show type for debug */}
                     </Text>
                 )}
 
-                {/* Video Preview */}
                 {selectedVideo?.uri && !isLoading && (
                     <View style={styles.videoPreviewContainer}>
                         <Video
@@ -185,13 +241,12 @@ function SignToText() {
                             isLooping={false}
                             onError={(error) => {
                                 console.log("Video Player Error:", error);
-                                setError("Error loading video preview.")
+                                setError(t('errors.videoPreviewError')) // Add translation
                             }}
                         />
                     </View>
                 )}
 
-                {/* Upload/Translate Button */}
                 {selectedVideo && (
                     <TouchableOpacity
                         onPress={handleUpload}
@@ -203,7 +258,6 @@ function SignToText() {
                 )}
             </View>
 
-            {/* Loading Indicator */}
             {isLoading && (
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator size="large" color="#3498db"/>
@@ -211,19 +265,17 @@ function SignToText() {
                 </View>
             )}
 
-            {/* Error Display */}
             {error && !isLoading && (
                 <View style={[styles.resultArea, styles.error]}>
                     <Ionicons name="alert-circle-outline" size={24} color="#c62828" style={{marginBottom: 5}}/>
-                    <Text style={styles.errorText}>Error: {error}</Text>
+                    <Text style={styles.errorText}>{t('common.error')}: {error}</Text>
                 </View>
             )}
 
-            {/* Result Display */}
             {translationResult && !isLoading && !error && (
                 <View style={[styles.resultArea, styles.success]}>
                     <Ionicons name="checkmark-circle-outline" size={24} color="#1b5e20" style={{marginBottom: 5}}/>
-                    <Text style={styles.resultTitle}>Translation:</Text>
+                    <Text style={styles.resultTitle}>{t('signToText.translationResultTitle')}:</Text> {/* Use t() */}
                     <Text style={styles.translationText}>{translationResult}</Text>
                 </View>
             )}
@@ -231,7 +283,7 @@ function SignToText() {
     );
 }
 
-// --- Styles ---
+// --- Styles (Keep your existing styles) ---
 const styles = StyleSheet.create({
     scrollView: {
         flex: 1,
@@ -380,5 +432,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
 });
+
 
 export default SignToText;
