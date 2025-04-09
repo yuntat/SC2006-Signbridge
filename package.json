@@ -19,7 +19,7 @@
     "@react-native-masked-view/masked-view": "0.3.2",
     "@react-navigation/bottom-tabs": "^6.3.1",
     "@react-navigation/compat": "^5.1.25",
-    "@react-navigation/drawer": "6.4.1",
+    "@react-navigation/drawer": "^6.4.1",
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/stack": "^6.2.1",
     "@use-expo/font": "^2.0.0",
