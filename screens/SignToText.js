@@ -23,7 +23,7 @@ const { width } = Dimensions.get('window');
 
 // --- IMPORTANT: Replace with your actual Bearer Token ---
 // Ensure there are no extra parentheses or quotes around the token string itself.
-const YOUR_BEARER_TOKEN = '337Bq6LcAQiyPP5V63kClBoJMiRCNkVVlklsSYCpqA2J9pBhLF62JQQJ99BDAAAAAAAAAAAAINFRAZML1n7t';
+const YOUR_BEARER_TOKEN = 'CTObst2v8eX5trGgKtxkJrcS1d3eys2ZLZ2u0wS9G4S34hYA80YhJQQJ99BDAAAAAAAAAAAAINFRAZML41fs';
 // -------------------------------------------------------
 
 function SignToText() {
