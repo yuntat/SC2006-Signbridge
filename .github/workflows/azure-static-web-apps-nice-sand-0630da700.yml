@@ -25,20 +25,21 @@ jobs:
         run: npx expo export --platform web --output-dir dist
 
 
-      # ✅ Run Python backend on Azure VM via SSH
       - name: Start Python backend on Azure VM
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
           script: |
             cd ~/signbridge-backend
             python3 -m venv venv
             source venv/bin/activate
-            pip install flask  # or: pip install -r requirements.txt
+            pip install flask  # or pip install -r requirements.txt
             pkill -f app.py || true
             nohup python3 app.py > backend.log 2>&1 &
+
 
 
       - name: Deploy to Azure Static Web Apps
