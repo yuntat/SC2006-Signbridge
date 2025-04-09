@@ -10,8 +10,8 @@ function CustomDrawerContent({ navigation, state }) {
   const menuItems = [
     { name: "SignBridgeMain", icon: Images.img1, routeName: "SignBridgeMain" },
     { name: "LiveTrans", icon: Images.img2, routeName: "LiveTrans" },
-    { name: "Pre-Recorded Video Upload", icon: Images.img5, routeName: "SignToText" },
-    { name: "Text-to-Sign", icon: Images.img3, routeName: "TextToSign" },
+    { name: "SignToText", icon: Images.img5, routeName: "SignToText" },
+    { name: "TextToSign", icon: Images.img3, routeName: "TextToSign" },
     { name: "LanguageSelect", icon: Images.img4, routeName: "LanguageSelect" }
   ];
 
@@ -129,7 +129,17 @@ function CustomDrawerContent({ navigation, state }) {
             );
           })}
 
-         
+          {/* You can apply similar animation logic to these sections/items too */}
+          <Block style={styles.sectionDivider}>
+            <View style={styles.divider} />
+            <Text style={styles.sectionTitle}>DOCUMENTATION</Text>
+          </Block>
+
+          {/* Example: Animating this item would require adding it to the itemAnimations setup */}
+          <Block style={styles.menuItem}>
+            <Image source={Images.docIcon} style={styles.icon} />
+            <DrawerCustomItem title="Getting Started" navigation={navigation} />
+          </Block>
         </ScrollView>
       </Block>
 
