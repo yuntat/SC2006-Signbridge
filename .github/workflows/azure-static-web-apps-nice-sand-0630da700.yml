@@ -12,7 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -24,6 +23,7 @@ jobs:
       - name: Build static files using Expo
         run: npx expo export --platform web --output-dir dist
 
+      # ✅ Run Python backend on Azure VM via SSH
       - name: Start Python backend on Azure VM
         uses: appleboy/ssh-action@v0.1.6
         with:
@@ -31,9 +31,13 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            pkill -f app.py || true
             cd ~/signbridge-backend
+            python3 -m venv venv
+            source venv/bin/activate
+            pip install flask  # or: pip install -r requirements.txt
+            pkill -f app.py || true
             nohup python3 app.py > backend.log 2>&1 &
+
 
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
