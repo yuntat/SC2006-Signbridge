@@ -23,6 +23,7 @@ jobs:
       - name: Build static files using Expo
         run: npx expo export --platform web --output-dir dist
 
+
       # ✅ Run Python backend on Azure VM via SSH
       - name: Start Python backend on Azure VM
         uses: appleboy/ssh-action@v0.1.6
