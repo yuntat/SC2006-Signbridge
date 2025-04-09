@@ -1,16 +1,15 @@
 import React, {useState} from 'react';
 import {
     Image,
+    Keyboard,
+    Platform,
     ScrollView,
+    StatusBar,
     StyleSheet,
     Text,
     TextInput,
-    View,
     TouchableOpacity,
-    Platform,
-    Keyboard,
-    Dimensions,
-    StatusBar, // Import StatusBar for potential top padding adjustment
+    View,
 } from 'react-native';
 
 // --- NEW: Import useNavigation hook ---
@@ -18,7 +17,8 @@ import {useNavigation} from '@react-navigation/native';
 
 import * as Animatable from 'react-native-animatable';
 
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
+import {Ionicons} from "@expo/vector-icons";
 
 
 // Static image map for LETTERS
@@ -104,7 +104,7 @@ const getOriginalWord = (outputKey) => {
 
 const TextToSign = () => {
     const navigation = useNavigation();
-    const { t } = useTranslation();
+    const {t} = useTranslation();
 
     const [inputText, setInputText] = useState('');
     const [outputItems, setOutputItems] = useState([]);
@@ -172,10 +172,10 @@ const TextToSign = () => {
                     let potentialWordMatch = false;
                     for (const pattern of patternsToCheck) {
                         const patternNoSpaces = pattern.replace(/ /g, '');
-                         // Check if the remaining input *could* start a pattern (ignoring spaces)
+                        // Check if the remaining input *could* start a pattern (ignoring spaces)
                         let remainingInputCheck = '';
                         let tempCheckIndex = currentIndex;
-                        while(tempCheckIndex < processedInput.length && remainingInputCheck.length < patternNoSpaces.length) {
+                        while (tempCheckIndex < processedInput.length && remainingInputCheck.length < patternNoSpaces.length) {
                             if (processedInput[tempCheckIndex] !== ' ') {
                                 remainingInputCheck += processedInput[tempCheckIndex];
                             }
@@ -183,9 +183,9 @@ const TextToSign = () => {
                         }
                         if (patternNoSpaces.startsWith(remainingInputCheck) && remainingInputCheck.length > 0) {
                             // If the current char starts a potential pattern, don't treat it as isolated yet
-                           // (This check might be overly complex, the original single char logic might be sufficient)
-                           // Let's simplify - the previous word check should handle most cases. If 'LOVE'
-                           // didn't match before, 'L' should be treated as 'L'.
+                            // (This check might be overly complex, the original single char logic might be sufficient)
+                            // Let's simplify - the previous word check should handle most cases. If 'LOVE'
+                            // didn't match before, 'L' should be treated as 'L'.
                         }
                     }
                     // Simplified: just push the letter if no word was found starting at this index
@@ -228,21 +228,17 @@ const TextToSign = () => {
     return (
         <View style={styles.container}>
             {/* Back Button */}
-            <TouchableOpacity
-                style={styles.backButton}
-                onPress={handleGoBack}
-                activeOpacity={0.7}
-            >
-                <Text style={styles.backButtonText}>{t('ui.back')}</Text>
-
+            <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
+                <Ionicons name="arrow-back" size={24} color="#333"/>
+                <Text style={styles.backButtonText}>Back</Text>
             </TouchableOpacity>
 
             <Animatable.Text
-              animation="fadeInDown"
-              duration={800}
-              style={styles.title}
+                animation="fadeInDown"
+                duration={800}
+                style={styles.title}
             >
-              {t('ui.textToSignTranslator')}
+                {t('ui.textToSignTranslator')}
             </Animatable.Text>
 
 
@@ -254,11 +250,12 @@ const TextToSign = () => {
                     placeholderTextColor="#A0AEC0"
                     value={inputText}
                     onChangeText={setInputText}
-                    clearButtonMode="while-editing"
+                    clearButtonMode="always"
                     autoCorrect={false}
                     autoCapitalize="characters" // Suggest uppercase
                 />
             </AnimatableView>
+
 
             {/* Translate Button */}
             <AnimatableView animation="fadeInUp" duration={600} delay={400}>
@@ -268,15 +265,6 @@ const TextToSign = () => {
                     activeOpacity={0.7}
                 >
                     <Text style={styles.translateButtonText}>{t('ui.translate')}</Text>
-                </TouchableOpacity>
-            </AnimatableView>
-            <AnimatableView animation="fadeInUp" duration={600} delay={500}>
-                <TouchableOpacity
-                    style={styles.clearButton}
-                    onPress={() => setInputText('')} // Clear the input
-                    activeOpacity={0.7}
-                >
-                    <Text style={styles.clearButtonText}>Clear</Text>
                 </TouchableOpacity>
             </AnimatableView>
             {/* Output Area */}
@@ -365,9 +353,10 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     backButtonText: {
-        fontSize: 18,
-        color: '#2C5282',
-        fontWeight: '600',
+        fontSize: 16,
+        marginLeft: 5,
+        color: '#333',
+        fontWeight: '500',
     },
     title: {
         fontSize: 28,
@@ -388,7 +377,7 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         color: '#2D3748',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
@@ -400,7 +389,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 25,
         shadowColor: '#2C5282',
-        shadowOffset: { width: 0, height: 4 },
+        shadowOffset: {width: 0, height: 4},
         shadowOpacity: 0.3,
         shadowRadius: 5,
         elevation: 5,
@@ -427,13 +416,13 @@ const styles = StyleSheet.create({
         minHeight: 100,
         justifyContent: 'space-between',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
+        shadowOffset: {width: 0, height: 1},
         shadowOpacity: 0.08,
         shadowRadius: 3,
         elevation: 2,
     },
     wordSignItem: {
-       width: 110, // Keep word signs potentially wider
+        width: 110, // Keep word signs potentially wider
     },
     image: {
         width: 50,
@@ -455,20 +444,30 @@ const styles = StyleSheet.create({
         height: 100, // Match height of items for alignment
         // backgroundColor: 'transparent', // Make it invisible
     },
-    clearButton: {
-        marginTop: 10,
-        alignSelf: 'center',
-        backgroundColor: '#E53E3E', // nice red tone
-        paddingVertical: 10,
-        paddingHorizontal: 20,
+    // clearButton: {
+    //     marginTop: 10,
+    //     alignSelf: 'center',
+    //     backgroundColor: '#E53E3E', // nice red tone
+    //     paddingVertical: 10,
+    //     paddingHorizontal: 20,
+    //     borderRadius: 10,
+    // },
+    //
+    // clearButtonText: {
+    //     color: '#FFFFFF',
+    //     fontSize: 16,
+    //     fontWeight: '600',
+    // },
+    inputRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#CBD5E0',
         borderRadius: 10,
+        paddingHorizontal: 10,
+        backgroundColor: '#fff',
     },
 
-    clearButtonText: {
-        color: '#FFFFFF',
-        fontSize: 16,
-        fontWeight: '600',
-    },
 
 });
 

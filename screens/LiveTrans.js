@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { StyleSheet, View, TouchableOpacity, Image, useWindowDimensions, ImageBackground } from 'react-native';
 import { Block, Button, Text } from 'galio-framework';
 import Webcam from 'react-webcam';
@@ -10,14 +10,50 @@ import { Images, argonTheme } from '../constants';
 const LiveTrans = () => {
   const webcamRef = useRef(null);
   const [isCameraOn, setIsCameraOn] = useState(true);
+  const [detectedLabel, setDetectedLabel] = useState("Waiting...");
   const { t } = useTranslation();
   const navigation = useNavigation();
   const { height, width } = useWindowDimensions();
 
+  const VM_IP = "http://20.2.65.230:5000";
+
+  const sendFrameToBackend = async () => {
+    if (!webcamRef.current) return;
+    const screenshot = webcamRef.current.getScreenshot();
+    if (!screenshot) return;
+
+    try {
+      const res = await fetch(`${VM_IP}/predict`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          image: screenshot.split(",")[1],
+        }),
+      });
+
+      const data = await res.json();
+      console.log("[DEBUG] Received:", data);
+      setDetectedLabel(data.label || "No label");
+    } catch (err) {
+      console.error("Prediction error:", err);
+      setDetectedLabel("Error");
+    }
+  };
+
+  useEffect(() => {
+    if (!isCameraOn) return;
+
+    const interval = setInterval(() => {
+      sendFrameToBackend();
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isCameraOn]);
+
   const videoConstraints = {
     width: 1280,
     height: 720,
-    facingMode: "user"
+    facingMode: "user",
   };
 
   return (
@@ -28,7 +64,6 @@ const LiveTrans = () => {
         resizeMode="cover"
       >
         <Block flex style={styles.container}>
-          {/* Back Button (Top Left) */}
           <TouchableOpacity 
             style={styles.backButton}
             onPress={() => navigation.navigate('SignBridgeMain')}
@@ -37,7 +72,6 @@ const LiveTrans = () => {
             <Text style={styles.backText}>{t('backToHome')}</Text>
           </TouchableOpacity>
 
-          {/* Language Switcher Button (Top Right) */}
           <TouchableOpacity 
             style={styles.languageButton}
             onPress={() => navigation.navigate('LanguageSelect')}
@@ -46,7 +80,6 @@ const LiveTrans = () => {
             <Text style={styles.languageText}>{t('currentLanguage')}</Text>
           </TouchableOpacity>
 
-          {/* Camera View */}
           <Block style={styles.cameraContainer}>
             {isCameraOn ? (
               <View style={styles.webcamContainer}>
@@ -61,9 +94,9 @@ const LiveTrans = () => {
             ) : (
               <Image source={Images.placeholder} style={styles.placeholder} />
             )}
+            <Text style={styles.detectionText}>Most Detected: {detectedLabel}</Text>
           </Block>
 
-          {/* Controls */}
           <Block style={styles.controls}>
             <Button 
               color={argonTheme.COLORS.ORANGE}
@@ -72,7 +105,6 @@ const LiveTrans = () => {
             >
               <Text>{isCameraOn ? t('turnOffCamera') : t('turnOnCamera')}</Text>
             </Button>
-            
             <Button 
               color={argonTheme.COLORS.PRIMARY}
               onPress={() => navigation.navigate('SignBridgeMain')}
@@ -88,12 +120,10 @@ const LiveTrans = () => {
 };
 
 const styles = StyleSheet.create({
-  backgroundImage: {
-    flex: 1
-  },
+  backgroundImage: { flex: 1 },
   container: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)', // Semi-transparent overlay
+    backgroundColor: 'rgba(0,0,0,0.5)',
     position: 'relative',
   },
   cameraContainer: {
@@ -104,25 +134,33 @@ const styles = StyleSheet.create({
   webcamContainer: {
     width: '90%',
     maxWidth: 1200,
-    aspectRatio: 16/9,
+    aspectRatio: 16 / 9,
     backgroundColor: '#000',
     overflow: 'hidden',
     borderRadius: 8,
     borderWidth: 2,
     borderColor: argonTheme.COLORS.WHITE,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   webcam: {
     width: '100%',
     height: '100%',
+    objectFit: 'cover',
   },
   placeholder: {
     width: '90%',
     maxWidth: 1200,
-    aspectRatio: 16/9,
+    aspectRatio: 16 / 9,
     backgroundColor: '#000',
     borderRadius: 8,
     borderWidth: 2,
     borderColor: argonTheme.COLORS.WHITE,
+  },
+  detectionText: {
+    color: '#fff',
+    fontSize: 18,
+    marginTop: 10,
   },
   controls: {
     position: 'absolute',
