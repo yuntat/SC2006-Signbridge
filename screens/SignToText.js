@@ -134,6 +134,7 @@ function SignToText() {
                     // 'Content-Length' header is usually set automatically by fetch when using a Blob body
                     // If you encounter issues, you might try setting it explicitly:
                     // 'Content-Length': videoBlob.size.toString(),
+                    'Access-Control-Allow-Origin' : '*'
                 },
                 // The body is now the raw video data (Blob)
                 body: videoBlob,
