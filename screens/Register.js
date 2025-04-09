@@ -83,12 +83,12 @@ const Register = ({ navigation }) => {
 
   const handleRegister = async () => {
     if (!formData.username || !formData.password) {
-      Alert.alert("Error", "Please fill in all fields");
+      showSnackbar("Please fill in all fields");
       return;
     }
 
     if (!formData.agreed) {
-      Alert.alert("Error", "You must agree to the terms and policies");
+      showSnackbar("You must agree to our terms and conditions!");
       return;
     }
 
@@ -107,7 +107,7 @@ const Register = ({ navigation }) => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.detail || "Registration failed");
       
-      Alert.alert("Success", "Account created successfully!");
+      showSnackbar("Login Success", "Success");
       navigation.replace("MainApp");
     } catch (error) {
       Alert.alert("Error", error.message);
@@ -176,7 +176,7 @@ const Register = ({ navigation }) => {
                   <Checkbox
                     checkboxStyle={{ borderWidth: 3 }}
                     color={argonTheme.COLORS.PRIMARY}
-                    label="I agree to the terms and policies"
+                    label="I agree to the terms and conditions"
                     checked={formData.agreed}
                     onChange={(checked) => handleInputChange('agreed', checked)}
                   />

@@ -18,80 +18,93 @@ const Onboarding = ({ navigation }) => {
   const { height, width } = useWindowDimensions();
 
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-      <Block flex style={[styles.container, { minHeight: height }]}>
-        <StatusBar hidden />
-
-        <Block flex center style={styles.backgroundContainer}>
-          <ImageBackground
-            source={Images.Onboarding}
-            style={[styles.backgroundImage, { height: height, width }]}
-          />
+    <Block flex style={[styles.container, { minHeight: height }]}>
+      <StatusBar hidden />
+      
+      {/* Background Image with Overlay */}
+      <ImageBackground
+        source={Images.Onboarding}
+        style={[styles.backgroundImage, { height, width }]}
+      >
+        <View style={styles.imageOverlay} />
+        
+        {/* Content Container */}
+        <Block flex style={styles.contentContainer}>
+          {/* New container wrapping logo, subtitle, and button */}
+          <View style={[styles.groupContainer, { width: width * 0.6 }]}>
+            {/* Logo */}
+            <Block style={styles.logoContainer}>
+              <Image source={Images.LogoOnboarding} style={styles.logo} />
+            </Block>
+            
+            {/* Subtitle */}
+            <Block style={styles.subTitle}>
+              <Text color="white" size={18}>
+                Breaking Barriers, Building Connections
+              </Text>
+            </Block>
+            
+            {/* Button */}
+            <Button
+              style={styles.button}
+              color={argonTheme.COLORS.SECONDARY}
+              onPress={() => navigation.replace("Register")}
+              textStyle={{ color: argonTheme.COLORS.BLACK }}
+            >
+              Let's Go!
+            </Button>
+          </View>
         </Block>
-
-        <Block style={styles.overlayContent}>
-          {/* Render the Logo - Make it Bigger */}
-          <Image source={Images.LogoOnboarding} style={styles.logo} />
-
-          {/* Keep Subtitle Only */}
-          <Block style={styles.subTitle}>
-            <Text color="white" size={18}>
-              Breaking Barriers, Building Connections!
-            </Text>
-          </Block>
-
-          {/* Button Positioned Below Subtitle */}
-          <Button
-            style={[styles.button, { width: width * 0.4 }]} // Reduced width
-            color={argonTheme.COLORS.SECONDARY}
-            onPress={() => navigation.replace("Register")}
-            textStyle={{ color: argonTheme.COLORS.BLACK }}
-          >
-            Get Started
-          </Button>
-        </Block>
-      </Block>
-    </ScrollView>
+      </ImageBackground>
+    </Block>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     backgroundColor: theme.COLORS.BLACK,
   },
-  backgroundContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1,
-  },
   backgroundImage: {
-    position: "absolute",
-    top: 0,
-    zIndex: 1,
+    flex: 1,
+    resizeMode: 'cover',
   },
-  overlayContent: {
-    position: "absolute",
-    top: "25%", // Adjust positioning as needed
-    width: "100%",
-    alignItems: "center",
-    zIndex: 3,
+  imageOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+  },
+  contentContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  groupContainer: {
+    backgroundColor: 'rgba(36, 36, 36, 0.5)',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+  },
+  logoContainer: {
+    marginBottom: 20,
   },
   logo: {
-    width: 500, // Increased logo size
-    height: 350,
+    width: 500, // Reduced size for better responsiveness
+    height: 350, // Maintain aspect ratio
     resizeMode: "contain",
-    marginBottom: 5,
   },
   subTitle: {
-    marginBottom: 20, // Space between subtitle and button
+    marginBottom: 30,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    padding: 10,
   },
   button: {
     height: theme.SIZES.BASE * 3,
+    width: '40%',
     shadowRadius: 0,
     shadowOpacity: 0,
-  }
+  },
 });
 
 export default Onboarding;
