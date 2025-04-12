@@ -2,8 +2,8 @@
     "welcome": "Welcome",
     "startTranslation": "Start Translation",
     "toggleCamera": "Toggle Camera",
-    "turnoffcamera": "turnOffCamera",
-    "turnoncamera": "turnOnCamera",
+    "turnOffCamera": "Turn Off Camera",
+    "turnOnCamera": "Turn On Camera",
     "liveVideoTranslation": "Live Video Translation",
     "buttons": {
       "livevideo": "Live Translation",
@@ -19,7 +19,9 @@
     },
     "language": {
       "english": "English",
-      "chinese": "Chinese"
+      "chinese": "Chinese",
+      "tamil": "Tamil",
+      "malay": "Malay"
     },
     
   "ui": {

@@ -81,9 +81,9 @@ class DrawerItem extends React.Component {
       <TouchableOpacity
         style={{ height: 60 }}
         onPress={() =>
-          title == "Getting Started"
+          title == "SGSL Bank"
             ? Linking.openURL(
-                "https://demos.creative-tim.com/argon-pro-react-native/docs/"
+                "https://blogs.ntu.edu.sg/sgslsignbank/"
               ).catch(err => console.error("An error occurred", err))
             : navigation.navigate(title)
         }

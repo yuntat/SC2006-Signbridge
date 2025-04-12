@@ -10,6 +10,7 @@ import {
     TextInput,
     TouchableOpacity,
     View,
+    ImageBackground
 } from 'react-native';
 
 // --- NEW: Import useNavigation hook ---
@@ -20,6 +21,7 @@ import * as Animatable from 'react-native-animatable';
 import {useTranslation} from 'react-i18next';
 import {Ionicons} from "@expo/vector-icons";
 
+import { Images, argonTheme } from '../constants';
 
 // Static image map for LETTERS
 const signImages = {
@@ -85,20 +87,18 @@ const patternToOutputKeyMap = {
 // --- END MODIFICATION ---
 
 
-// Create an Animatable View component
+
 const AnimatableView = Animatable.createAnimatableComponent(View);
 
-// Helper to get original spacing (adjusted for the mapping)
 const getOriginalWord = (outputKey) => {
-    // This map now uses the OUTPUT KEY to find the display text
     const map = {
-        ILOVEYOU: 'I LOVE YOU', // Always display the full phrase for the ILOVEYOU image
+        ILOVEYOU: 'I LOVE YOU',
         HELLO: 'HELLO',
         YES: 'YES',
         NO: 'NO',
         OK: 'OK',
     };
-    return map[outputKey] || outputKey; // Fallback to the key itself if not found
+    return map[outputKey] || outputKey; 
 };
 
 
@@ -226,124 +226,129 @@ const TextToSign = () => {
     };
 
     return (
-        <View style={styles.container}>
-            {/* Back Button */}
-            <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-                <Ionicons name="arrow-back" size={24} color="#333"/>
-                <Text style={styles.backButtonText}>Back</Text>
-            </TouchableOpacity>
-
-            <Animatable.Text
-                animation="fadeInDown"
-                duration={800}
-                style={styles.title}
-            >
-                {t('ui.textToSignTranslator')}
-            </Animatable.Text>
-
-
-            {/* Input */}
-            <AnimatableView animation="fadeInUp" duration={600} delay={200}>
-                <TextInput
-                    style={styles.input}
-                    placeholder={t('ui.inputHint')}
-                    placeholderTextColor="#A0AEC0"
-                    value={inputText}
-                    onChangeText={setInputText}
-                    clearButtonMode="always"
-                    autoCorrect={false}
-                    autoCapitalize="characters" // Suggest uppercase
-                />
-            </AnimatableView>
-
-
-            {/* Translate Button */}
-            <AnimatableView animation="fadeInUp" duration={600} delay={400}>
-                <TouchableOpacity
-                    style={styles.translateButton}
-                    onPress={handleTranslate}
-                    activeOpacity={0.7}
-                >
-                    <Text style={styles.translateButtonText}>{t('ui.translate')}</Text>
+        <ImageBackground
+            source={Images.Onboarding}
+            style={styles.backgroundImage}
+            resizeMode="cover"
+        >
+            <View style={styles.container}>
+                {/* Back Button */}
+                <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
+                    <Ionicons name="arrow-back" size={24} color="white"/>
+                    <Text style={styles.backButtonText}>Back</Text>
                 </TouchableOpacity>
-            </AnimatableView>
-            {/* Output Area */}
-            {outputItems.length > 0 && (
-                <ScrollView
-                    contentContainerStyle={styles.imageContainer}
-                    showsVerticalScrollIndicator={false}
-                    keyboardShouldPersistTaps="handled"
-                >
-                    {outputItems.map((item, index) => {
-                        const animationProps = {
-                            animation: 'zoomIn',
-                            duration: 400,
-                            delay: index * 100,
-                            useNativeDriver: true,
-                        };
 
-                        if (item === ' ') {
-                            // Render space
-                            return (
-                                <AnimatableView
-                                    key={`space-${index}`}
-                                    style={styles.space}
-                                    {...animationProps} // Animate space for consistency? Optional.
-                                />
-                            );
-                        } else if (wordImages[item]) {
-                            // Render word image (using the mapped 'item' which could be 'ILOVEYOU')
-                            const wordSource = wordImages[item];
-                            const displayLabel = getOriginalWord(item); // Get display text based on output key
-                            return (
-                                <AnimatableView
-                                    key={`word-${item}-${index}`}
-                                    style={[styles.signItem, styles.wordSignItem]}
-                                    {...animationProps}
-                                >
-                                    <Image
-                                        source={wordSource}
-                                        style={[styles.image, styles.wordImage]}
-                                        resizeMode="contain"
+                <Animatable.Text
+                    animation="fadeInDown"
+                    duration={800}
+                    style={styles.title}
+                >
+                    {t('ui.textToSignTranslator')}
+                </Animatable.Text>
+
+                {/* Input */}
+                <AnimatableView animation="fadeInUp" duration={600} delay={200}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder={t('ui.inputHint')}
+                        placeholderTextColor="#A0AEC0"
+                        value={inputText}
+                        onChangeText={setInputText}
+                        clearButtonMode="always"
+                        autoCorrect={false}
+                        autoCapitalize="characters"
+                    />
+                </AnimatableView>
+
+                {/* Translate Button */}
+                <AnimatableView animation="fadeInUp" duration={600} delay={400}>
+                    <TouchableOpacity
+                        style={styles.translateButton}
+                        onPress={handleTranslate}
+                        activeOpacity={0.7}
+                    >
+                        <Text style={styles.translateButtonText}>{t('ui.translate')}</Text>
+                    </TouchableOpacity>
+                </AnimatableView>
+
+                {/* Output Area */}
+                {outputItems.length > 0 && (
+                    <ScrollView
+                        contentContainerStyle={styles.imageContainer}
+                        showsVerticalScrollIndicator={false}
+                        keyboardShouldPersistTaps="handled"
+                    >
+                        {outputItems.map((item, index) => {
+                            const animationProps = {
+                                animation: 'zoomIn',
+                                duration: 400,
+                                delay: index * 100,
+                                useNativeDriver: true,
+                            };
+
+                            if (item === ' ') {
+                                return (
+                                    <AnimatableView
+                                        key={`space-${index}`}
+                                        style={styles.space}
+                                        {...animationProps}
                                     />
-                                    <Text style={styles.letterLabel}>{displayLabel}</Text>
-                                </AnimatableView>
-                            );
-                        } else if (signImages[item]) {
-                            // Render letter image
-                            const letterSource = signImages[item];
-                            return (
-                                <AnimatableView
-                                    key={`letter-${item}-${index}`}
-                                    style={styles.signItem}
-                                    {...animationProps}
-                                >
-                                    <Image
-                                        source={letterSource}
-                                        style={styles.image}
-                                        resizeMode="contain"
-                                    />
-                                    <Text style={styles.letterLabel}>{item}</Text>
-                                </AnimatableView>
-                            );
-                        } else {
-                            // Should not happen with current logic, but good practice
-                            return null;
-                        }
-                    })}
-                </ScrollView>
-            )}
-        </View>
+                                );
+                            } else if (wordImages[item]) {
+                                const wordSource = wordImages[item];
+                                const displayLabel = getOriginalWord(item);
+                                return (
+                                    <AnimatableView
+                                        key={`word-${item}-${index}`}
+                                        style={[styles.signItem, styles.wordSignItem]}
+                                        {...animationProps}
+                                    >
+                                        <Image
+                                            source={wordSource}
+                                            style={[styles.image, styles.wordImage]}
+                                            resizeMode="contain"
+                                        />
+                                        <Text style={styles.letterLabel}>{displayLabel}</Text>
+                                    </AnimatableView>
+                                );
+                            } else if (signImages[item]) {
+                                const letterSource = signImages[item];
+                                return (
+                                    <AnimatableView
+                                        key={`letter-${item}-${index}`}
+                                        style={styles.signItem}
+                                        {...animationProps}
+                                    >
+                                        <Image
+                                            source={letterSource}
+                                            style={styles.image}
+                                            resizeMode="contain"
+                                        />
+                                        <Text style={styles.letterLabel}>{item}</Text>
+                                    </AnimatableView>
+                                );
+                            } else {
+                                return null;
+                            }
+                        })}
+                    </ScrollView>
+                )}
+            </View>
+        </ImageBackground>
     );
 };
 
-// Styles remain the same as in your original code
 const styles = StyleSheet.create({
+    backgroundImage: {
+        flex: 1,
+        width: '100%',
+        height: '100%',
+    },
     container: {
         flex: 1,
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
         paddingHorizontal: 25,
-        backgroundColor: '#EBF4FF',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     backButton: {
         position: 'absolute',
@@ -351,23 +356,28 @@ const styles = StyleSheet.create({
         left: 15,
         zIndex: 1,
         padding: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     backButtonText: {
         fontSize: 16,
         marginLeft: 5,
-        color: '#333',
+        color: 'white',
         fontWeight: '500',
     },
     title: {
         fontSize: 28,
         fontWeight: 'bold',
-        marginTop: 50, // Adjusted for back button
+        marginTop: 50,
         marginBottom: 30,
         textAlign: 'center',
-        color: '#2C5282',
+        color: 'white',
+        textShadowColor: 'rgba(0, 0, 0, 0.5)',
+        textShadowOffset: {width: 1, height: 1},
+        textShadowRadius: 3,
     },
     input: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
         borderWidth: 1,
         borderColor: '#E2E8F0',
         borderRadius: 12,
@@ -383,7 +393,7 @@ const styles = StyleSheet.create({
         elevation: 3,
     },
     translateButton: {
-        backgroundColor: '#AD03DE',
+        backgroundColor: argonTheme.COLORS.DEFAULT,
         paddingVertical: 16,
         borderRadius: 12,
         alignItems: 'center',
@@ -409,7 +419,7 @@ const styles = StyleSheet.create({
     },
     signItem: {
         alignItems: 'center',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
         borderRadius: 10,
         padding: 10,
         width: 85,
@@ -417,19 +427,19 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         shadowColor: '#000',
         shadowOffset: {width: 0, height: 1},
-        shadowOpacity: 0.08,
+        shadowOpacity: 0.2,
         shadowRadius: 3,
         elevation: 2,
     },
     wordSignItem: {
-        width: 110, // Keep word signs potentially wider
+        width: 110,
     },
     image: {
         width: 50,
         height: 50,
     },
     wordImage: {
-        width: 70, // Keep word images potentially larger
+        width: 70,
         height: 70,
     },
     letterLabel: {
@@ -440,35 +450,9 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     space: {
-        width: 40, // Width of the space visual gap
-        height: 100, // Match height of items for alignment
-        // backgroundColor: 'transparent', // Make it invisible
+        width: 40,
+        height: 100,
     },
-    // clearButton: {
-    //     marginTop: 10,
-    //     alignSelf: 'center',
-    //     backgroundColor: '#E53E3E', // nice red tone
-    //     paddingVertical: 10,
-    //     paddingHorizontal: 20,
-    //     borderRadius: 10,
-    // },
-    //
-    // clearButtonText: {
-    //     color: '#FFFFFF',
-    //     fontSize: 16,
-    //     fontWeight: '600',
-    // },
-    inputRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: '#CBD5E0',
-        borderRadius: 10,
-        paddingHorizontal: 10,
-        backgroundColor: '#fff',
-    },
-
-
 });
 
 export default TextToSign;

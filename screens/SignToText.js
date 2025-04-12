@@ -9,20 +9,17 @@ import {
     StyleSheet,
     Text,
     TouchableOpacity,
-    View
+    View,
+    ImageBackground
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { ResizeMode, Video } from 'expo-av';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons'; // Using Expo's vector icons
-// Import FileSystem if you need more advanced file operations,
-// but fetch().blob() should work for reading the content directly.
-// import * as FileSystem from 'expo-file-system';
+import { Images, argonTheme } from '../constants';
 
 const { width } = Dimensions.get('window');
 
-
-// -------------------------------------------------------
 
 function SignToText() {
     const { t } = useTranslation();
@@ -210,125 +207,136 @@ function SignToText() {
 
 
     return (
-        <ScrollView style={styles.scrollView} contentContainerStyle={styles.container}>
-            <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-                <Ionicons name="arrow-back" size={24} color="#333"/>
-                <Text style={styles.backButtonText}>{t('ui.back')}</Text>
-            </TouchableOpacity>
-
-            <Text style={styles.title}>{t('signToText.title')}</Text>
-            <Text style={styles.subtitle}>{t('signToText.subtitle')}</Text>
-
-            <View style={styles.uploadArea}>
-                <TouchableOpacity onPress={pickVideo} style={styles.selectButton} disabled={isLoading}>
-                   <Text style={styles.buttonText}>{selectedVideo ? t('signToText.changeVideo') : t('signToText.selectVideo')}</Text>
+        <ImageBackground
+            source={Images.Onboarding}
+            style={styles.backgroundImage}
+            resizeMode="cover"
+        >
+            <ScrollView style={styles.scrollView} contentContainerStyle={styles.container}>
+                {/* Back Button */}
+                <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+                    <Ionicons name="arrow-back" size={24} color="white"/>
+                    <Text style={styles.backButtonText}>{t('ui.back')}</Text>
                 </TouchableOpacity>
 
-                {selectedVideo && (
-                    <Text style={styles.fileName} numberOfLines={1} ellipsizeMode="middle">
-                        Selected: {selectedVideo.name} ({selectedVideo.type}) {/* Show type for debug */}
-                    </Text>
-                )}
+                <Text style={styles.title}>{t('signToText.title')}</Text>
+                <Text style={styles.subtitle}>{t('signToText.subtitle')}</Text>
 
-                {selectedVideo?.uri && !isLoading && (
-                    <View style={styles.videoPreviewContainer}>
-                        <Video
-                            ref={videoPlayerRef}
-                            style={styles.videoPreview}
-                            source={{uri: selectedVideo.uri}}
-                            useNativeControls
-                            resizeMode={ResizeMode.CONTAIN}
-                            isLooping={false}
-                            onError={(error) => {
-                                console.log("Video Player Error:", error);
-                                setError(t('errors.videoPreviewError')) // Add translation
-                            }}
-                        />
+                <View style={styles.uploadArea}>
+                    <TouchableOpacity onPress={pickVideo} style={styles.selectButton} disabled={isLoading}>
+                       <Text style={styles.buttonText}>{selectedVideo ? t('signToText.changeVideo') : t('signToText.selectVideo')}</Text>
+                    </TouchableOpacity>
+
+                    {selectedVideo && (
+                        <Text style={styles.fileName} numberOfLines={1} ellipsizeMode="middle">
+                            Selected: {selectedVideo.name} ({selectedVideo.type})
+                        </Text>
+                    )}
+
+                    {selectedVideo?.uri && !isLoading && (
+                        <View style={styles.videoPreviewContainer}>
+                            <Video
+                                ref={videoPlayerRef}
+                                style={styles.videoPreview}
+                                source={{uri: selectedVideo.uri}}
+                                useNativeControls
+                                resizeMode={ResizeMode.CONTAIN}
+                                isLooping={false}
+                                onError={(error) => {
+                                    console.log("Video Player Error:", error);
+                                    setError(t('errors.videoPreviewError'))
+                                }}
+                            />
+                        </View>
+                    )}
+
+                    {selectedVideo && (
+                        <TouchableOpacity
+                            onPress={handleUpload}
+                            style={[styles.uploadButton, (isLoading || !selectedVideo) && styles.buttonDisabled]}
+                            disabled={isLoading || !selectedVideo}
+                        >
+                            <Text style={styles.buttonText}>
+                                {isLoading ? t('signToText.translating') : t('signToText.translateVideo')}
+                            </Text>
+                        </TouchableOpacity>
+                    )}
+                </View>
+
+                {isLoading && (
+                    <View style={styles.loadingContainer}>
+                        <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY}/>
+                        <Text style={styles.loadingText}>{t('signToText.processing')}</Text>
                     </View>
                 )}
 
-                {selectedVideo && (
-                    <TouchableOpacity
-                        onPress={handleUpload}
-                        style={[styles.uploadButton, (isLoading || !selectedVideo) && styles.buttonDisabled]}
-                        disabled={isLoading || !selectedVideo}
-                    >
-                        <Text style={styles.buttonText}>{isLoading ? t('signToText.translating') : t('signToText.translateVideo')}</Text>
-                    </TouchableOpacity>
+                {error && !isLoading && (
+                    <View style={[styles.resultArea, styles.error]}>
+                        <Ionicons name="alert-circle-outline" size={24} color="#c62828" style={{marginBottom: 5}}/>
+                        <Text style={styles.errorText}>{t('common.error')}: {error}</Text>
+                    </View>
                 )}
-            </View>
 
-            {isLoading && (
-                <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#3498db"/>
-                    <Text style={styles.loadingText}>{t('signToText.processing')}</Text>
-                </View>
-            )}
-
-            {error && !isLoading && (
-                <View style={[styles.resultArea, styles.error]}>
-                    <Ionicons name="alert-circle-outline" size={24} color="#c62828" style={{marginBottom: 5}}/>
-                    <Text style={styles.errorText}>{t('common.error')}: {error}</Text>
-                </View>
-            )}
-
-            {translationResult && !isLoading && !error && (
-                <View style={[styles.resultArea, styles.success]}>
-                    <Ionicons name="checkmark-circle-outline" size={24} color="#1b5e20" style={{marginBottom: 5}}/>
-                    <Text style={styles.resultTitle}>{t('signToText.translationResultTitle')}:</Text> {/* Use t() */}
-                    <Text style={styles.translationText}>{translationResult}</Text>
-                </View>
-            )}
-        </ScrollView>
+                {translationResult && !isLoading && !error && (
+                    <View style={[styles.resultArea, styles.success]}>
+                        <Ionicons name="checkmark-circle-outline" size={24} color="#1b5e20" style={{marginBottom: 5}}/>
+                        <Text style={styles.resultTitle}>{t('signToText.translationResultTitle')}:</Text>
+                        <Text style={styles.translationText}>{translationResult}</Text>
+                    </View>
+                )}
+            </ScrollView>
+        </ImageBackground>
     );
 }
 
-// --- Styles (Keep your existing styles) ---
 const styles = StyleSheet.create({
+    backgroundImage: {
+        flex: 1,
+        width: '100%',
+        height: '100%',
+    },
     scrollView: {
         flex: 1,
-        backgroundColor: '#f0f4f7',
+        backgroundColor: 'transparent',
     },
     container: {
-        flexGrow: 1, // Allows content to scroll if it overflows
+        flexGrow: 1,
         alignItems: 'center',
         padding: 20,
-        paddingTop: 60, // Extra padding for custom back button area
+        paddingTop: 60,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     backButton: {
         position: 'absolute',
-        top: Platform.OS === 'ios' ? 50 : 30, // Adjust for status bar height
+        top: Platform.OS === 'ios' ? 50 : 30,
         left: 15,
         flexDirection: 'row',
         alignItems: 'center',
         paddingVertical: 8,
         paddingHorizontal: 10,
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
         borderRadius: 20,
-        zIndex: 10, // Ensure it's above other content
-        // Simple shadow for visibility
-        shadowColor: '#000',
-        shadowOffset: {width: 0, height: 1},
-        shadowOpacity: 0.2,
-        shadowRadius: 2,
-        elevation: 3,
+        zIndex: 10,
     },
     backButtonText: {
         fontSize: 16,
         marginLeft: 5,
-        color: '#333',
+        color: 'white',
         fontWeight: '500',
     },
     title: {
         fontSize: 26,
         fontWeight: 'bold',
-        color: '#2c3e50',
+        color: 'white',
         marginBottom: 8,
         textAlign: 'center',
+        textShadowColor: 'rgba(0, 0, 0, 0.5)',
+        textShadowOffset: {width: 1, height: 1},
+        textShadowRadius: 3,
     },
     subtitle: {
         fontSize: 16,
-        color: '#7f8c8d',
+        color: 'rgba(255, 255, 255, 0.8)',
         marginBottom: 30,
         textAlign: 'center',
     },
@@ -338,11 +346,11 @@ const styles = StyleSheet.create({
         gap: 15,
         marginBottom: 25,
         padding: 20,
-        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
         borderRadius: 10,
     },
     selectButton: {
-        backgroundColor: '#3498db',
+        backgroundColor: argonTheme.COLORS.DEFAULT,
         paddingVertical: 14,
         paddingHorizontal: 30,
         borderRadius: 8,
@@ -350,7 +358,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     uploadButton: {
-        backgroundColor: '#2ecc71',
+        backgroundColor: argonTheme.COLORS.SUCCESS,
         paddingVertical: 14,
         paddingHorizontal: 30,
         borderRadius: 8,
@@ -360,7 +368,7 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: 'white',
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: 'bold',
     },
     buttonDisabled: {
@@ -369,22 +377,22 @@ const styles = StyleSheet.create({
     },
     fileName: {
         fontStyle: 'italic',
-        color: '#555',
+        color: 'rgba(255, 255, 255, 0.8)',
         fontSize: 14,
         marginTop: 5,
         paddingHorizontal: 10,
         textAlign: 'center',
     },
     videoPreviewContainer: {
-        width: width * 0.8, // 80% of screen width
-        aspectRatio: 16 / 9, // Standard video aspect ratio
+        width: width * 0.8,
+        aspectRatio: 16 / 9,
         marginTop: 15,
-        backgroundColor: '#e0e0e0', // Placeholder background
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
         borderRadius: 8,
-        overflow: 'hidden', // Clip the video to the border radius
+        overflow: 'hidden',
     },
     videoPreview: {
-        flex: 1, // Take up full space of container
+        flex: 1,
     },
     loadingContainer: {
         marginTop: 30,
@@ -394,7 +402,7 @@ const styles = StyleSheet.create({
     loadingText: {
         marginTop: 15,
         fontSize: 16,
-        color: '#3498db',
+        color: 'white',
         fontWeight: '500',
     },
     resultArea: {
@@ -404,13 +412,12 @@ const styles = StyleSheet.create({
         width: '95%',
         alignItems: 'center',
         borderWidth: 1,
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
     },
     error: {
-        backgroundColor: '#ffebee',
         borderColor: '#e57373',
     },
     success: {
-        backgroundColor: '#e8f5e9',
         borderColor: '#a5d6a7',
     },
     errorText: {

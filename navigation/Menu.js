@@ -1,16 +1,16 @@
-import React, { useEffect, useRef } from 'react'; // Import useEffect and useRef
+import React, { useEffect, useRef } from 'react';
 import { Block, Text, theme } from "galio-framework";
-import { Image, ScrollView, StyleSheet, View, TouchableOpacity, Animated } from "react-native"; // Import Animated
-import { DrawerItem as DrawerCustomItem } from "../components";
+import { Image, ScrollView, StyleSheet, View, TouchableOpacity, Animated, Linking } from "react-native"; // Import Animated
+import { DrawerItem as DrawerCustomItem } from "../components"; //unnecessary prob
 import Images from "../constants/Images";
 
 import { useDrawerStatus } from '@react-navigation/drawer';
 
 function CustomDrawerContent({ navigation, state }) {
   const menuItems = [
-    { name: "SignBridgeMain", icon: Images.img1, routeName: "SignBridgeMain" },
-    { name: "LiveTrans", icon: Images.img2, routeName: "LiveTrans" },
-    { name: "SignToText", icon: Images.img5, routeName: "SignToText" },
+    { name: "SignBridgeMain", icon: Images.img5, routeName: "SignBridgeMain" },
+    { name: "LiveTrans", icon: Images.img1, routeName: "LiveTrans" },
+    { name: "SignToText", icon: Images.img2, routeName: "SignToText" },
     { name: "TextToSign", icon: Images.img3, routeName: "TextToSign" },
     { name: "LanguageSelect", icon: Images.img4, routeName: "LanguageSelect" }
   ];
@@ -55,29 +55,21 @@ function CustomDrawerContent({ navigation, state }) {
         ])
       );
 
-      // Stagger the start of each item's animation
+
       Animated.stagger(
-        75, // Delay in milliseconds between each item's animation start
+        75, 
         animations
       ).start();
-
-    // Optional: Add reset logic if using useIsDrawerOpen
     } else {
-      // Reset animations when drawer closes if needed
         itemAnimations.forEach(anim => {
         anim.opacity.setValue(0);
         anim.translateX.setValue(-30);
       });
     }
-
-    // Add itemAnimations (and potentially isDrawerOpen) to the dependency array
-    // Using itemAnimations ensures effect runs if the refs somehow changed (unlikely here)
-    // Using isDrawerOpen ensures effect runs when drawer open/close state changes
   }, [itemAnimations, isDrawerOpen]);
 
 
   const handleLogout = () => {
-    // You might want to add an animation here too before navigating
     navigation.navigate("Register");
   };
 
@@ -96,15 +88,14 @@ function CustomDrawerContent({ navigation, state }) {
             const { opacity, translateX } = itemAnimations[index];
 
             return (
-              // Wrap the original item Block in an Animated.View
               <Animated.View
-                key={item.routeName} // Use a stable key like routeName
+                key={item.routeName} 
                 style={{
-                  opacity: opacity, // Apply animated opacity
-                  transform: [{ translateX: translateX }], // Apply animated translation
+                  opacity: opacity, 
+                  transform: [{ translateX: translateX }], 
                 }}
               >
-                <Block // This is the original container for layout/styling
+                <Block
                   style={[
                     styles.menuItem,
                     isActive && styles.activeMenuItem
@@ -117,33 +108,33 @@ function CustomDrawerContent({ navigation, state }) {
                       isActive && styles.activeIcon
                     ]}
                   />
-                  {/* Pass props down to your custom item component */}
                   <DrawerCustomItem
                     title={item.name}
                     navigation={navigation}
                     focused={isActive}
-                    // You might need to adjust DrawerCustomItem if it relies on direct parent styles
                   />
                 </Block>
               </Animated.View>
             );
           })}
 
-          {/* You can apply similar animation logic to these sections/items too */}
           <Block style={styles.sectionDivider}>
             <View style={styles.divider} />
-            <Text style={styles.sectionTitle}>DOCUMENTATION</Text>
+            <Text style={styles.sectionTitle}>Need help?</Text>
           </Block>
 
-          {/* Example: Animating this item would require adding it to the itemAnimations setup */}
           <Block style={styles.menuItem}>
-            <Image source={Images.docIcon} style={styles.icon} />
-            <DrawerCustomItem title="Getting Started" navigation={navigation} />
+            <Image source={Images.img5} style={styles.icon} />
+            <TouchableOpacity 
+              onPress={() => Linking.openURL('https://blogs.ntu.edu.sg/sgslsignbank/language-parameters/')}
+              style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}
+            >
+              <Text style={{ marginLeft: 10 }}>SGSL_Bank</Text>
+            </TouchableOpacity>
           </Block>
         </ScrollView>
       </Block>
 
-      {/* Logout Button - Could also be animated */}
       <Block style={styles.logoutContainer}>
         <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
           <Image source={Images.logoutIcon} style={styles.icon} />
@@ -175,14 +166,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     paddingHorizontal: 16,
-    // Removed backgroundColor: 'transparent' as Animated.View now handles opacity
   },
   activeMenuItem: {
     backgroundColor: 'rgba(0,0,0,0.05)',
     borderLeftWidth: 3,
     borderLeftColor: theme.COLORS.PRIMARY,
-    // Ensure padding is consistent or adjusted if needed due to Animated.View wrapper
-    paddingHorizontal: 16, // Make sure padding is still correct
+    paddingHorizontal: 16,
   },
   icon: {
     width: 24,
@@ -197,7 +186,6 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 16,
     marginTop: 16,
-     // You might want to animate this block too
   },
   divider: {
     height: StyleSheet.hairlineWidth,
@@ -214,7 +202,6 @@ const styles = StyleSheet.create({
     padding: 16,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: theme.COLORS.MUTED,
-    // You might want to animate this block too
   },
   logoutButton: {
     flexDirection: 'row',

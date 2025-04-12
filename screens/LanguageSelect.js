@@ -1,12 +1,11 @@
 import React from 'react';
 import { 
   View, 
-  Button, 
   StyleSheet, 
   TouchableOpacity, 
   Text, 
   useWindowDimensions, 
-  ImageBackground 
+  ImageBackground
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -27,29 +26,45 @@ const LanguageSelect = ({ navigation }) => {
       style={[styles.backgroundImage, { height, width }]}
       resizeMode="cover"
     >
-      {/* Reduced opacity overlay or remove it completely */}
       <View style={styles.container}>
-        {/* Back Button (Top Left) */}
+        {/* Back Button */}
         <TouchableOpacity 
           style={styles.backButton}
           onPress={() => navigation.navigate('SignBridgeMain')}
         >
-          <MaterialIcons name="arrow-back" size={24} color={argonTheme.COLORS.PRIMARY} />
+          <MaterialIcons name="arrow-back" size={24} color="white" />
           <Text style={styles.backText}>{t('backToHome')}</Text>
         </TouchableOpacity>
 
         <View style={styles.buttonContainer}>
-          <Button 
-            title={t('language.english')} 
-            onPress={() => changeLanguage('en')} 
-            color={argonTheme.COLORS.PRIMARY}
-          />
-          <Button 
-            title={t('language.chinese')} 
-            onPress={() => changeLanguage('zh')} 
-            color={argonTheme.COLORS.PRIMARY}
-          />
+          {/* Language Selection Buttons */}
+          <TouchableOpacity 
+            style={styles.languageButton}
+            onPress={() => changeLanguage('en')}
+          >
+            <Text style={styles.buttonText}>{t('language.english')}</Text>
+          </TouchableOpacity>
 
+          <TouchableOpacity 
+            style={styles.languageButton}
+            onPress={() => changeLanguage('zh')}
+          >
+            <Text style={styles.buttonText}>{t('language.chinese')}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.languageButton}
+            onPress={() => changeLanguage('tl')}
+          >
+            <Text style={styles.buttonText}>{t('language.tamil')}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.languageButton}
+            onPress={() => changeLanguage('ma')}
+          >
+            <Text style={styles.buttonText}>{t('language.malay')}</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ImageBackground>
@@ -63,16 +78,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)', // More transparent overlay
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   backButton: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 30,
+    padding: 10,
   },
   backText: {
     marginLeft: 5,
-    color: argonTheme.COLORS.PRIMARY,
+    color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -80,11 +96,24 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    gap: 15,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 15,
+    padding: 25,
+    marginHorizontal: 20,
+  },
+  languageButton: {
+    width: '50%',
+    padding: 15,
+    backgroundColor: argonTheme.COLORS.DEFAULT,
     borderRadius: 10,
-    padding: 20,
-    marginHorizontal: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

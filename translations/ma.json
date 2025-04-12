@@ -1,0 +1,41 @@
+{
+  "welcome": "Selamat Datang",
+  "startTranslation": "Mulakan Terjemahan",
+  "toggleCamera": "Togol Kamera",
+  "turnoffcamera": "Matikan Kamera",
+  "turnoncamera": "Hidupkan Kamera",
+  "liveVideoTranslation": "Terjemahan Video Langsung",
+  "buttons": {
+    "livevideo": "Terjemahan Langsung",
+    "preRecordedVideo": "Muat Naik Video Rakaman",
+    "texttosign": "Teks-ke-Isyarat",
+    "languageselect": "Pilihan Bahasa"
+  },
+  "textToSign": {
+    "title": "Teks kepada Bahasa Isyarat",
+    "inputPlaceholder": "Masukkan teks anda di sini...",
+    "convertButton": "Tukar",
+    "outputPlaceholder": "Output bahasa isyarat akan muncul di sini"
+  },
+  "language": {
+    "english": "Bahasa Inggeris",
+    "chinese": "Bahasa Cina",
+    "tamil": "Bahasa Tamil",
+    "malay": "Bahasa Melayu"
+  },
+  "ui": {
+    "back": "Kembali",
+    "textToSignTranslator": "Penterjemah Teks-ke-Isyarat 🤟",
+    "translate": "Terjemah",
+    "inputHint": "Taip perkataan seperti 'HELLO LOVE'"
+  },
+  "signToText": {
+    "title": "Penterjemah Video BIS",
+    "subtitle": "Muat naik video rakaman Bahasa Isyarat",
+    "selectVideo": "Pilih Video",
+    "changeVideo": "Tukar Video",
+    "translateVideo": "Terjemah Video",
+    "translating": "Menterjemah...",
+    "processing": "Memproses video anda..."
+  }
+}

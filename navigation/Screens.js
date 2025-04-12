@@ -2,7 +2,6 @@ import {Dimensions, useWindowDimensions} from "react-native";
 // header for screens
 // drawer
 import CustomDrawerContent from "./Menu";
-// screens
 import SignBridgeMain from '../screens/SignBridgeMain';
 import Home from "../screens/Home";
 import Onboarding from "../screens/Onboarding";

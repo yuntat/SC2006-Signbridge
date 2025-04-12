@@ -72,13 +72,13 @@ const LiveTrans = () => {
             <Text style={styles.backText}>{t('backToHome')}</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
+          {/* <TouchableOpacity 
             style={styles.languageButton}
             onPress={() => navigation.navigate('LanguageSelect')}
           >
             <Ionicons name="language" size={24} color={argonTheme.COLORS.PRIMARY} />
             <Text style={styles.languageText}>{t('currentLanguage')}</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <Block style={styles.cameraContainer}>
             {isCameraOn ? (
@@ -99,20 +99,23 @@ const LiveTrans = () => {
 
           <Block style={styles.controls}>
             <Button 
-              color={argonTheme.COLORS.ORANGE}
+              color={argonTheme.COLORS.DEFAULT}
               onPress={() => setIsCameraOn(!isCameraOn)}
               style={styles.controlButton}
+              textStyle={styles.buttonText} // Add this prop
             >
-              <Text>{isCameraOn ? t('turnOffCamera') : t('turnOnCamera')}</Text>
+              {isCameraOn ? t('turnOffCamera') : t('turnOnCamera')}
             </Button>
             <Button 
-              color={argonTheme.COLORS.PRIMARY}
+              color={argonTheme.COLORS.DEFAULT}
               onPress={() => navigation.navigate('SignBridgeMain')}
               style={styles.controlButton}
+              textStyle={styles.buttonText} // Add this prop
             >
-              <Text>{t('startTranslation')}</Text>
+              {t('startTranslation')}
             </Button>
           </Block>
+
         </Block>
       </ImageBackground>
     </Block>
@@ -139,7 +142,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderRadius: 8,
     borderWidth: 2,
-    borderColor: argonTheme.COLORS.WHITE,
+    borderColor: argonTheme.COLORS.INFO,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -156,6 +159,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 2,
     borderColor: argonTheme.COLORS.WHITE,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   detectionText: {
     color: '#fff',
@@ -174,6 +182,9 @@ const styles = StyleSheet.create({
   },
   controlButton: {
     paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginHorizontal: 5,
     shadowColor: argonTheme.COLORS.BLACK,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
@@ -195,21 +206,21 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     color: argonTheme.COLORS.PRIMARY,
   },
-  languageButton: {
-    position: 'absolute',
-    top: 40,
-    right: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.8)',
-    padding: 10,
-    borderRadius: 20,
-    zIndex: 10,
-  },
-  languageText: {
-    marginLeft: 5,
-    color: argonTheme.COLORS.PRIMARY,
-  },
+  // languageButton: {
+  //   position: 'absolute',
+  //   top: 40,
+  //   right: 20,
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   backgroundColor: 'rgba(255,255,255,0.8)',
+  //   padding: 10,
+  //   borderRadius: 20,
+  //   zIndex: 10,
+  // },
+  // languageText: {
+  //   marginLeft: 5,
+  //   color: argonTheme.COLORS.PRIMARY,
+  // },
 });
 
 export default LiveTrans;
