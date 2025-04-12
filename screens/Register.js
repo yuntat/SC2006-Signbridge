@@ -7,7 +7,8 @@ import {
   KeyboardAvoidingView,
   Alert,
   useWindowDimensions,
-  TouchableOpacity
+  TouchableOpacity,
+  View
 } from "react-native";
 import { Block, Checkbox, Text, theme } from "galio-framework";
 import { Button, Icon, Input } from "../components";
@@ -140,19 +141,25 @@ const Register = ({ navigation }) => {
                 {/* Username Field */}
                 <Block width={width * 0.8} style={{ marginBottom: 20 }}>
                   <Input
+                    password
                     borderless
                     placeholder="Username"
-                    value={formData.username}
+                    value={formData.password}
                     onChangeText={(text) => handleInputChange('username', text)}
                     iconContent={
-                      <Icon
-                        size={16}
-                        color={argonTheme.COLORS.ICON}
-                        name="hat-3"
-                        family="ArgonExtra"
-                        style={styles.inputIcons}
-                      />
+                      <View style={{ marginRight: 15 }}>  {/* Add wrapper View with margin */}
+                        <Icon
+                          size={16}
+                          color={argonTheme.COLORS.ICON}
+                          name="hat-3"
+                          family="ArgonExtra"
+                        />
+                      </View>
                     }
+                    inputStyle={{ 
+                      paddingLeft: 10,  // Add padding to the text input
+                      marginLeft: 5     // Additional spacing if needed
+                    }}
                   />
                 </Block>
 
@@ -165,14 +172,19 @@ const Register = ({ navigation }) => {
                     value={formData.password}
                     onChangeText={(text) => handleInputChange('password', text)}
                     iconContent={
-                      <Icon
-                        size={16}
-                        color={argonTheme.COLORS.ICON}
-                        name="padlock-unlocked"
-                        family="ArgonExtra"
-                        style={styles.inputIcons}
-                      />
+                      <View style={{ marginRight: 15 }}>  {/* Add wrapper View with margin */}
+                        <Icon
+                          size={16}
+                          color={argonTheme.COLORS.ICON}
+                          name="padlock-unlocked"
+                          family="ArgonExtra"
+                        />
+                      </View>
                     }
+                    inputStyle={{ 
+                      paddingLeft: 10,  // Add padding to the text input
+                      marginLeft: 5     // Additional spacing if needed
+                    }}
                   />
                 </Block>
 
@@ -203,7 +215,7 @@ const Register = ({ navigation }) => {
                     disabled={loginLoading || registerLoading}
                   >
                     <Text bold size={14} color={argonTheme.COLORS.WHITE}>
-                      {registerLoading ? "CREATING..." : "NEW USER"}
+                      {registerLoading ? "CREATING..." : "Register"}
                     </Text>
                   </Button>
                   
@@ -214,7 +226,7 @@ const Register = ({ navigation }) => {
                     disabled={loginLoading || registerLoading}
                   >
                     <Text bold size={14} color={argonTheme.COLORS.WHITE}>
-                      {loginLoading ? "LOGGING IN..." : "RETURNING USER"}
+                      {loginLoading ? "LOGGING IN..." : "Login"}
                     </Text>
                   </Button>
                 </Block>
@@ -259,7 +271,8 @@ const styles = (width, height) => StyleSheet.create({
     padding: 20
   },
   inputIcons: {
-    marginRight: 12
+    marginRight: 50,
+    paddingLeft: 10,
   },
   buttonContainer: {
     width: width * 0.8,
@@ -271,7 +284,14 @@ const styles = (width, height) => StyleSheet.create({
   },
   backgroundImage: {
     flex: 1
-  }
+  },
+  inputContainer: {
+    paddingHorizontal: 10,  // Overall container padding
+  },
+  iconWrapper: {
+    marginRight: 12,        // Space between icon and text
+    paddingLeft: 5          // Space before icon
+  },
 });
 
 export default Register;
