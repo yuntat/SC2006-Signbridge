@@ -32,6 +32,11 @@
     ],
     "android": {
       "package": "com.anonymous.argonfreereactnative"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "25a9d6ef-d7c1-4161-9a90-24934773ca9c"
+      }
     }
   }
 }
