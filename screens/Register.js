@@ -6,7 +6,8 @@ import {
   StatusBar,
   KeyboardAvoidingView,
   Alert,
-  useWindowDimensions
+  useWindowDimensions,
+  TouchableOpacity
 } from "react-native";
 import { Block, Checkbox, Text, theme } from "galio-framework";
 import { Button, Icon, Input } from "../components";
@@ -33,6 +34,10 @@ const Register = ({ navigation }) => {
   const [snackbarMessage, setSnackbarMessage] = React.useState('');
   const [snackbarType, setSnackbarType] = React.useState('error'); // 'error' or 'success'
   
+  const handleTermsPress = () => {
+    navigation.navigate("TermsScreen");
+  };
+
   const showSnackbar = (message, type = 'error') => {
     setSnackbarMessage(message);
     setSnackbarType(type);
@@ -176,10 +181,17 @@ const Register = ({ navigation }) => {
                   <Checkbox
                     checkboxStyle={{ borderWidth: 3 }}
                     color={argonTheme.COLORS.PRIMARY}
-                    label="I agree to the terms and conditions"
                     checked={formData.agreed}
                     onChange={(checked) => handleInputChange('agreed', checked)}
                   />
+                  <Block flex row style={{ flexWrap: 'wrap', alignItems: 'center' }}>
+                    <Text style={{ marginLeft: 8 }}>I agree to the </Text>
+                    <TouchableOpacity onPress={handleTermsPress}>
+                      <Text style={{ color: argonTheme.COLORS.PRIMARY, textDecorationLine: 'underline' }}>
+                        terms and conditions
+                      </Text>
+                    </TouchableOpacity>
+                  </Block>
                 </Block>
 
                 {/* Action Buttons */}

@@ -11,6 +11,7 @@ import Register from "../screens/Register";
 import LiveTrans from "../screens/LiveTrans";
 import LanguageSelect from "../screens/LanguageSelect";
 import TextToSign from "../screens/TextToSign";
+import TermsScreen from "../screens/TermsScreen";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {createDrawerNavigator} from "@react-navigation/drawer";
 import {createStackNavigator} from "@react-navigation/stack";
@@ -114,6 +115,7 @@ export default function OnboardingStack() {
         <Stack.Navigator screenOptions={{headerShown: false}}>
             <Stack.Screen name="Onboarding" component={Onboarding}/>
             <Stack.Screen name="Register" component={Register}/>
+            <Stack.Screen name="TermsScreen" component={TermsScreen} />
             <Stack.Screen name="MainApp" component={MainDrawer}/>
         </Stack.Navigator>
     );
