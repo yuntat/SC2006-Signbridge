@@ -15,7 +15,7 @@ const LiveTrans = () => {
   const navigation = useNavigation();
   const { height, width } = useWindowDimensions();
 
-  const VM_IP = "http://20.2.65.230:5000";
+  const VM_IP = "https://signtotext.eastasia.cloudapp.azure.com/flaskapp";
 
   const sendFrameToBackend = async () => {
     if (!webcamRef.current) return;
