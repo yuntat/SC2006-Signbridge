@@ -6,7 +6,7 @@ import bcrypt
 
 router = APIRouter()
 
-# Register a user (hashed password)
+# Register a user with hashing of password
 @router.post("/register")
 async def register_user(user: User):
     existing_user = collection.find_one({"username": user.username})
@@ -17,7 +17,7 @@ async def register_user(user: User):
 
     new_user = {
         "username": user.username,
-        "password": hashed_pw.decode('utf-8'),  # store as string
+        "password": hashed_pw.decode('utf-8'), 
         "user_type": user.user_type,
         "userId": str(uuid.uuid4())
     }
@@ -25,7 +25,7 @@ async def register_user(user: User):
     collection.insert_one(new_user)
     return {"message": "User registered successfully"}
 
-# Login (verify password)
+# Login (verifying user password)
 @router.post("/login")
 async def login_user(user: User):
     db_user = collection.find_one({"username": user.username})
@@ -47,12 +47,11 @@ async def get_user(username: str):
     if user:
         return {
             "username": user["username"],
-            "password": user["password"],
             "user_type": user["user_type"]
         }
     raise HTTPException(status_code=404, detail="User not found")
 
-# DeleteUser (based off their username)
+# DeleteUser (based off their username), should only be accesible to admin
 @router.delete("/{username}")
 async def delete_user(username: str):
     result = collection.delete_one({"username": username})

@@ -1,10 +1,3 @@
-# from pydantic import BaseModel
-
-# class User(BaseModel):
-#     userId: str
-#     username: str
-#     email: str
-
 from pydantic import BaseModel
 from enum import Enum
 
