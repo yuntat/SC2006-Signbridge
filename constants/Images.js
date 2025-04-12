@@ -28,17 +28,10 @@ const Products = {
 
 export default {
   Onboarding,
-  Logo,
   LogoOnboarding,
-  ProfileBackground,
   ProfilePicture,
-  RegisterBackground,
   Viewed,
   Products,
-  Pro,
-  ArgonLogo,
-  iOSLogo,
-  androidLogo,
   img1,
   img2,
   img3,
