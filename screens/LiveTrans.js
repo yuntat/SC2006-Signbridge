@@ -266,7 +266,7 @@ const LiveTrans = () => {
                 <Ionicons
                     name="camera-reverse"
                     size={24}
-                    color={!isCameraOn ? argonTheme.COLORS.MUTED : "#FFFFFF"} // Dim icon when disabled
+                    color={!isCameraOn ?  "#FFFFFF":argonTheme.COLORS.MUTED} // Dim icon when disabled
                 />
             </TouchableOpacity>
 
