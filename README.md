@@ -6,6 +6,8 @@
 ---
 
 ## 📌 Project Overview
+[![Watch the video](https://tse3.mm.bing.net/th?id=OIP.EnDOzvJ0__c4MA7Tz-OlywHaHa&w=474&h=474&c=7)](https://youtu.be/Fmkda6RvcJQ?si=TBu15kzDa6HJaf5-)
+
 
 **SignBridge** is a cross-platform mobile web app built with React Native (Expo) and Flask backend. It empowers communication between deaf and hearing individuals through AI-powered real-time gesture recognition, video translation, and text-to-sign conversion. The system includes built-in admin moderation tools and multilingual support for increased accessibility.
 
@@ -56,6 +58,7 @@ SC2006-SIGNBRIDGE/
 │   └── routes/                           # Route definitions for Flask API
 ├── components/                           # Reusable UI components (buttons, inputs, etc.)
 ├── constants/                            # Static values (colors, text config, etc.)
+├── deliverables/                         # SC2006 Lab Deliverables
 ├── dist/                                 # Web build output (from `expo export`)
 ├── navigation/                           # Navigation logic (stack/tab structure)
 ├── screens/                              # Main UI screens (Login, Home, etc.)
