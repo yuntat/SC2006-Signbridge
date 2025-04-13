@@ -17,6 +17,7 @@ bcrypt: For hashing user passwords.
 *Note:  This backend utilizes the same core technologies as the main SignBridge backend as outlined in the main README.md for consistency and maintainability.
 
 ## 🗂️ File Structure
+```
 backend/
  ├── routes/
  │   └── users.py   # API routes for user management
@@ -24,6 +25,7 @@ backend/
  ├── main.py        # FastAPI application entry point
  ├── database.py    # MongoDB connection logic
  └── requirements.txt # Dependencies
+```
 *Note: This structure is a subset of the main SignBridge backend; refer to the main README.md for the full project structure.
 
 ## ⚙️ Installation & Setup
@@ -37,6 +39,7 @@ MongoDB instance (or Azure Cosmos DB with MongoDB API)
 
     ```
     git clone [https://github.com/your-username/SC2006-SignLanguageApp.git](https://github.com/your-username/SC2006-SignLanguageApp.git)
+
     cd SC2006-SignBridge/backend
     ```
 
@@ -100,11 +103,11 @@ DELETE /users/{username}: Deletes a user ( *Admin access should be implemented i
 *Note:  API testing is covered as part of the main SignBridge application testing. Refer to SC2006 Project Team 4 Test Cases.pdf for comprehensive test details.
 
 ## 🛠️ Dependencies (requirements.txt)
-fastapi
-uvicorn[standard]
-pymongo
-python-dotenv
-bcrypt
+* fastapi
+* uvicorn[standard]
+* pymongo
+* python-dotenv
+* bcrypt
 
 ## 👨‍💻 Contributors
 *See the main README.md for the full list of contributors.
