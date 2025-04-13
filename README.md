@@ -127,7 +127,7 @@ Refer to SC2006 Project Team 4 Test Cases.pdf for full test coverage.
 ## 🚀 Azure Deployment
 - **Frontend:** Azure Static Web Apps using GitHub Actions
 
-- **Backend:** Deployed to Azure Virtual Machine with HTTPS Flask API
+- **Backend:** Deployed to Azure Virtual Machine with HTTPS Flask API and FastAPI
 
 - **Data:** MongoDB (hosted on Atlas) and Azure Blob Storage for video data
 
