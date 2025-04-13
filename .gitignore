@@ -1,10 +1,41 @@
-node_modules/**/*
-.expo/*
-npm-debug.*
+# ===============================
+# 📦 Node.js / NPM
+# ===============================
+node_modules/
+npm-debug.log*
 package-lock.json
 yarn.lock
-*.jks
-*.p12
-*.key
-*.mobileprovision
+
+# ===============================
+# 🚀 Expo / React Native
+# ===============================
+.expo/
+.expo-shared/
+
+# ===============================
+# 📱 Android / iOS (Native Code)
+# ===============================
+android/
+ios/
+*.jks          # Android keystore
+*.p12          # iOS push certificate
+*.key          # Generic key files
+*.mobileprovision  # iOS provisioning profile
+
+# ===============================
+# 🧪 IDE / Editor / Workspace
+# ===============================
 .idea/
+.vscode/
+.DS_Store
+
+# ===============================
+# ⚙️ Build Output / Cache
+# ===============================
+dist/
+
+# ===============================
+# 🔒 Environment / Secrets
+# ===============================
+.env
+.env.local
