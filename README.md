@@ -1,9 +1,7 @@
 # 📱 SignBridge – Bridging Deaf and the World
 
-[🔗 Visit Live Website](https://nice-sand-0630da700.6.azurestaticapps.net/)  
-*Note: Replace the above with your custom domain when ready.*
+[🔗 Visit Live Website](https://nice-sand-0630da700.6.azurestaticapps.net/) 
 
----
 
 ## 📌 Project Overview
 [![Watch the video](https://tse3.mm.bing.net/th?id=OIP.EnDOzvJ0__c4MA7Tz-OlywHaHa&w=474&h=474&c=7)](https://youtu.be/Fmkda6RvcJQ?si=TBu15kzDa6HJaf5-)
