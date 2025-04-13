@@ -97,7 +97,7 @@ GET /users/{username}: Retrieves a user's information (excluding password) by us
 DELETE /users/{username}: Deletes a user ( *Admin access should be implemented in the main backend to protect this endpoint*).
 
 ## 🧪 Testing
-*Note:  API testing is covered as part of the main SignBridge application testing.  Refer to  SC2006 Project Team 4 Test Cases.pdf  for comprehensive test details.
+*Note:  API testing is covered as part of the main SignBridge application testing. Refer to SC2006 Project Team 4 Test Cases.pdf for comprehensive test details.
 
 ## 🛠️ Dependencies (requirements.txt)
 fastapi
