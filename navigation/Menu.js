@@ -1,12 +1,15 @@
 import React, { useEffect, useRef } from 'react';
 import { Block, Text, theme } from "galio-framework";
-import { Image, ScrollView, StyleSheet, View, TouchableOpacity, Animated, Linking } from "react-native"; // Import Animated
-import { DrawerItem as DrawerCustomItem } from "../components"; //unnecessary prob
+import { Image, ScrollView, StyleSheet, View, TouchableOpacity, Animated, Linking, useWindowDimensions } from "react-native";
+import { DrawerItem as DrawerCustomItem } from "../components";
 import Images from "../constants/Images";
-
 import { useDrawerStatus } from '@react-navigation/drawer';
 
 function CustomDrawerContent({ navigation, state }) {
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768; // Tablet breakpoint
+  const drawerWidth = isMobile ? width * 0.7 : 320; // 70% of screen on mobile, fixed 320px on desktop
+
   const menuItems = [
     { name: "SignBridgeMain", icon: Images.img5, routeName: "SignBridgeMain" },
     { name: "LiveTrans", icon: Images.img1, routeName: "LiveTrans" },
@@ -15,76 +18,67 @@ function CustomDrawerContent({ navigation, state }) {
     { name: "LanguageSelect", icon: Images.img4, routeName: "LanguageSelect" }
   ];
 
-  // Get the current route name from navigation state
   const nestedState = state.routes[state.index].state;
   const currentRoute = nestedState
     ? nestedState.routes[nestedState.index].name
     : state.routes[state.index].name;
 
-  // --- Animation Setup ---
-  // Create refs for animation values for each menu item
   const itemAnimations = useRef(
     menuItems.map(() => ({
-      opacity: new Animated.Value(0), // Start invisible
-      translateX: new Animated.Value(-30), // Start 30 pixels to the left
+      opacity: new Animated.Value(0),
+      translateX: new Animated.Value(-30),
     }))
   ).current;
 
-  // Optional: Hook to detect if the drawer is open. Useful if you want the
-  // animation to replay every time the drawer opens.
   const isDrawerOpen = useDrawerStatus() === 'open';
 
   useEffect(() => {
-    // --- Animation Logic ---
-    // Optional: Uncomment the 'if (isDrawerOpen)' block if using useIsDrawerOpen
     if (isDrawerOpen) {
-
-      // Create an array of animation sequences (opacity + translation) for each item
       const animations = itemAnimations.map((anim) =>
-        Animated.parallel([ // Animate opacity and translation simultaneously
+        Animated.parallel([
           Animated.timing(anim.opacity, {
-            toValue: 1, // Fade in
-            duration: 300, // Animation duration in milliseconds
-            useNativeDriver: true, // Use native thread for performance
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
           }),
           Animated.timing(anim.translateX, {
-            toValue: 0, // Slide to original position
+            toValue: 0,
             duration: 300,
             useNativeDriver: true,
           }),
         ])
       );
 
-
-      Animated.stagger(
-        75, 
-        animations
-      ).start();
+      Animated.stagger(75, animations).start();
     } else {
-        itemAnimations.forEach(anim => {
+      itemAnimations.forEach(anim => {
         anim.opacity.setValue(0);
         anim.translateX.setValue(-30);
       });
     }
   }, [itemAnimations, isDrawerOpen]);
 
-
   const handleLogout = () => {
     navigation.navigate("Register");
   };
 
   return (
-    <Block style={styles.container}>
+    <Block style={[styles.container, { width: drawerWidth }]}>
       <Block style={styles.header}>
-        {/* You could potentially animate the logo too */}
-        <Image source={Images.SignBridgeLogoSmall} style={styles.logo} resizeMode="contain" />
+        <Image 
+          source={Images.SignBridgeLogoSmall} 
+          style={[
+            styles.logo,
+            { width: isMobile ? '60%' : '70%' }
+          ]} 
+          resizeMode="contain" 
+        />
       </Block>
 
       <Block flex>
         <ScrollView showsVerticalScrollIndicator={false}>
           {menuItems.map((item, index) => {
             const isActive = currentRoute === item.routeName;
-            // Get the animation values for this specific item
             const { opacity, translateX } = itemAnimations[index];
 
             return (
@@ -98,47 +92,50 @@ function CustomDrawerContent({ navigation, state }) {
                 <Block
                   style={[
                     styles.menuItem,
-                    isActive && styles.activeMenuItem
+                    isActive && styles.activeMenuItem,
+                    isMobile && styles.mobileMenuItem
                   ]}
                 >
                   <Image
                     source={item.icon}
                     style={[
                       styles.icon,
-                      isActive && styles.activeIcon
+                      isActive && styles.activeIcon,
+                      isMobile && styles.mobileIcon
                     ]}
                   />
                   <DrawerCustomItem
                     title={item.name}
                     navigation={navigation}
                     focused={isActive}
+                    style={isMobile && { fontSize: 14 }}
                   />
                 </Block>
               </Animated.View>
             );
           })}
 
-          <Block style={styles.sectionDivider}>
+          <Block style={[styles.sectionDivider, isMobile && styles.mobileSectionDivider]}>
             <View style={styles.divider} />
-            <Text style={styles.sectionTitle}>Need help?</Text>
+            <Text style={[styles.sectionTitle, isMobile && styles.mobileSectionTitle]}>Need help?</Text>
           </Block>
 
-          <Block style={styles.menuItem}>
-            <Image source={Images.img5} style={styles.icon} />
+          <Block style={[styles.menuItem, isMobile && styles.mobileMenuItem]}>
+            <Image source={Images.img5} style={[styles.icon, isMobile && styles.mobileIcon]} />
             <TouchableOpacity 
               onPress={() => Linking.openURL('https://blogs.ntu.edu.sg/sgslsignbank/language-parameters/')}
               style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}
             >
-              <Text style={{ marginLeft: 10 }}>SGSL_Bank</Text>
+              <Text style={[styles.linkText, isMobile && styles.mobileLinkText]}>SGSL_Bank</Text>
             </TouchableOpacity>
           </Block>
         </ScrollView>
       </Block>
 
-      <Block style={styles.logoutContainer}>
+      <Block style={[styles.logoutContainer, isMobile && styles.mobileLogoutContainer]}>
         <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-          <Image source={Images.logoutIcon} style={styles.icon} />
-          <Text style={styles.logoutText}>Log Out</Text>
+          <Image source={Images.logoutIcon} style={[styles.icon, isMobile && styles.mobileIcon]} />
+          <Text style={[styles.logoutText, isMobile && styles.mobileLogoutText]}>Log Out</Text>
         </TouchableOpacity>
       </Block>
     </Block>
@@ -158,7 +155,6 @@ const styles = StyleSheet.create({
     borderBottomColor: theme.COLORS.MUTED,
   },
   logo: {
-    width: '70%',
     aspectRatio: 1,
   },
   menuItem: {
@@ -167,17 +163,25 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
   },
+  mobileMenuItem: {
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+  },
   activeMenuItem: {
     backgroundColor: 'rgba(0,0,0,0.05)',
     borderLeftWidth: 3,
     borderLeftColor: theme.COLORS.PRIMARY,
-    paddingHorizontal: 16,
   },
   icon: {
     width: 24,
     height: 24,
     marginRight: 12,
     tintColor: theme.COLORS.MUTED,
+  },
+  mobileIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 8,
   },
   activeIcon: {
     tintColor: theme.COLORS.BLACK,
@@ -186,6 +190,11 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 16,
     marginTop: 16,
+  },
+  mobileSectionDivider: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    marginTop: 12,
   },
   divider: {
     height: StyleSheet.hairlineWidth,
@@ -198,10 +207,23 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textTransform: 'uppercase',
   },
+  mobileSectionTitle: {
+    fontSize: 11,
+  },
+  linkText: {
+    marginLeft: 10,
+  },
+  mobileLinkText: {
+    marginLeft: 8,
+    fontSize: 14,
+  },
   logoutContainer: {
     padding: 16,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: theme.COLORS.MUTED,
+  },
+  mobileLogoutContainer: {
+    padding: 12,
   },
   logoutButton: {
     flexDirection: 'row',
@@ -211,6 +233,10 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     fontSize: 16,
     color: theme.COLORS.MUTED,
+  },
+  mobileLogoutText: {
+    marginLeft: 8,
+    fontSize: 14,
   },
 });
 

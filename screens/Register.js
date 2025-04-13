@@ -141,10 +141,9 @@ const Register = ({ navigation }) => {
                 {/* Username Field */}
                 <Block width={width * 0.8} style={{ marginBottom: 20 }}>
                   <Input
-                    password
                     borderless
                     placeholder="Username"
-                    value={formData.password}
+                    value={formData.username}
                     onChangeText={(text) => handleInputChange('username', text)}
                     iconContent={
                       <View style={{ marginRight: 15 }}>  {/* Add wrapper View with margin */}
