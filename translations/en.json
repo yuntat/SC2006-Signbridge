@@ -2,8 +2,8 @@
     "welcome": "Welcome",
     "startTranslation": "Start Translation",
     "toggleCamera": "Toggle Camera",
-    "turnOffCamera": "Turn Off Camera",
-    "turnOnCamera": "Turn On Camera",
+    "turnoffcamera": "Turn Off Camera",
+    "turnoncamera": "Turn On Camera",
     "liveVideoTranslation": "Live Video Translation",
     "buttons": {
       "livevideo": "Live Translation",
