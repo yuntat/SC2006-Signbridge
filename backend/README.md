@@ -87,17 +87,17 @@ MongoDB instance (or Azure Cosmos DB with MongoDB API)
         * Configure environment variables (e.g., `COSMOS_CONNECTION_STRING`) in the Azure Web App settings.
 
 ## 💾 Data Models (models.py)
-UserType (Enum): Defines user roles (admin, normal).
-User (BaseModel): Pydantic model for user data:
-username (str): User's login name.
-password (str): User's hashed password.
-user_type (UserType): User's role.
+* UserType (Enum): Defines user roles (admin, normal).
+* User (BaseModel): Pydantic model for user data:
+* username (str): User's login name.
+* password (str): User's hashed password.
+* user_type (UserType): User's role.
 
 ## 🚀 API Endpoints (routes/users.py)
-POST /users/register: Registers a new user, hashing the password before storing it.
-POST /users/login: Authenticates a user by verifying the provided password against the stored hash.
-GET /users/{username}: Retrieves a user's information (excluding password) by username.
-DELETE /users/{username}: Deletes a user ( *Admin access should be implemented in the main backend to protect this endpoint*).
+* POST /users/register: Registers a new user, hashing the password before storing it.
+* POST /users/login: Authenticates a user by verifying the provided password against the stored hash.
+* GET /users/{username}: Retrieves a user's information (excluding password) by username.
+* DELETE /users/{username}: Deletes a user ( *Admin access should be implemented in the main backend to protect this endpoint*).
 
 ## 🧪 Testing
 *Note:  API testing is covered as part of the main SignBridge application testing. Refer to SC2006 Project Team 4 Test Cases.pdf for comprehensive test details.
