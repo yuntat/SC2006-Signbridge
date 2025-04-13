@@ -50,27 +50,32 @@
 
 ```
 SC2006-SIGNBRIDGE/
-├── .github/             # GitHub Actions workflows
-├── assets/              # App images, fonts, icons
-├── backend/             # Flask backend (API, models, database connection)
-│   └── routes/          # Route definitions for Flask API
-├── components/          # Reusable UI components (buttons, inputs, etc.)
-├── constants/           # Static values (colors, text config, etc.)
-├── dist/                # Web build output (from `expo export`)
-├── navigation/          # Navigation logic (stack/tab structure)
-├── screens/             # Main UI screens (Login, Home, etc.)
-├── translations/        # Language JSON files for i18n (en, zh, ma, tl)
+├── .github/                              # GitHub Actions workflows
+├── assets/                               # App images, fonts, icons
+├── backend/                              # Flask backend (API, models, database connection)
+│   └── routes/                           # Route definitions for Flask API
+├── components/                           # Reusable UI components (buttons, inputs, etc.)
+├── constants/                            # Static values (colors, text config, etc.)
+├── dist/                                 # Web build output (from `expo export`)
+├── navigation/                           # Navigation logic (stack/tab structure)
+├── screens/                              # Main UI screens (Login, Home, etc.)
+├── translations/                         # Language JSON files for i18n (en, zh, ma, tl)
+├── vm/                                   # Auzre VM deployment
+│   └── video-translation/                # Video translation
+│   └── yolo-inference/                   # Yolo pose recognition
+│       └── deployment (Azure VM)/        # Package deployed in azure VM
+│       └── model training/               # Model training files
 │
-├── .gitignore           # Files and folders ignored in version control
-├── App.js               # Main app entry point
-├── Demo Script.pdf      # Live demo walkthrough document
-├── README.md            # Project documentation
-├── app.json             # Expo project configuration
-├── babel.config.js      # Babel settings
-├── eas.json             # Expo Application Services config
-├── i18n.js              # Language configuration
-├── package.json         # Project metadata and dependencies
-├── web.config           # Azure Static Web App configuration
+├── .gitignore                            # Files and folders ignored in version control
+├── App.js                                # Main app entry point
+├── Demo Script.pdf                       # Live demo walkthrough document
+├── README.md                             # Project documentation
+├── app.json                              # Expo project configuration
+├── babel.config.js                       # Babel settings
+├── eas.json                              # Expo Application Services config
+├── i18n.js                               # Language configuration
+├── package.json                          # Project metadata and dependencies
+├── web.config                            # Azure Static Web App configuration
 ```
 ## ⚙️ Installation & Setup
 
