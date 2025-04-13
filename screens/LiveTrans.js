@@ -254,7 +254,7 @@ const LiveTrans = () => {
               style={[styles.controlButton, styles.flexButton]} // Added flexButton style
               textStyle={styles.buttonText}
             >
-              {isCameraOn ? t('turnOffCamera') : t('turnOnCamera')}
+              {isCameraOn ? t('turnoffcamera') : t('turnoncamera')}
             </Button>
 
             {/* NEW: Switch Camera Button (Icon Only) */}
