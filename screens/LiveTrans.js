@@ -1,11 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { StyleSheet, View, TouchableOpacity, Image, useWindowDimensions, ImageBackground, Platform, AppState } from 'react-native'; // Keep Platform and AppState
 import { Block, Button, Text } from 'galio-framework';
-import Webcam from 'react-webcam'; // Use react-webcam
+import Webcam from 'react-webcam';
 import { useTranslation } from 'react-i18next';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native'; // Keep useNavigation
-// Removed useIsFocused as it's less critical in web context and adds complexity
+import { useNavigation } from '@react-navigation/native';
 import { Images, argonTheme } from '../constants';
 
 // --- IMPORTANT ---
@@ -29,7 +28,6 @@ const LiveTrans = () => {
 
 
   // --- App State/Tab Visibility Handling (Basic for Web) ---
-  // NOTE: AppState is React Native specific. For web, use document.visibilityState
   useEffect(() => {
     const handleVisibilityChange = () => {
         if (document.hidden) {
@@ -40,7 +38,7 @@ const LiveTrans = () => {
             // setIsCameraOn(false);
         } else {
             console.log('Tab is visible');
-            // Optionally restart based on previous state if desired
+
         }
     };
 
@@ -143,8 +141,7 @@ const LiveTrans = () => {
         clearInterval(intervalId);
       }
     };
-    // Dependencies: Re-run effect if these change (visibility handled separately)
-  }, [isCameraOn, isTranslating]); // Removed isFocused/hasPermission
+  }, [isCameraOn, isTranslating]);
 
   // --- Button Handlers ---
   const toggleCamera = () => {
@@ -266,7 +263,7 @@ const LiveTrans = () => {
   );
 };
 
-// Styles (mostly kept the same, adjusted cameraPreview)
+// Styles
 const styles = StyleSheet.create({
   backgroundImage: { flex: 1 },
   container: {
@@ -282,19 +279,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cameraOuterContainer: {
-    width: '90%', // Responsive width
-    maxWidth: 800, // Max width for larger screens
-    aspectRatio: 16 / 9, // Maintain aspect ratio
-    backgroundColor: '#000', // Black background for camera/placeholder
+    width: '90%',
+    maxWidth: 800,
+    aspectRatio: 16 / 9,
+    backgroundColor: '#000',
     borderRadius: 8,
-    overflow: 'hidden', // Clip webcam preview
+    overflow: 'hidden',
     borderWidth: 2,
     borderColor: argonTheme.COLORS.INFO,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 15, // Space between camera and detection text
+    marginBottom: 15,
   },
-  webcamPreview: { // Renamed from cameraPreview
+  webcamPreview: {
     width: '100%',
     height: '100%',
     // objectFit: 'cover', // Use this if needed for scaling within the container
@@ -304,7 +301,7 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#222', // Dark placeholder background
+    backgroundColor: '#222',
   },
    placeholderText: {
       color: argonTheme.COLORS.MUTED,
@@ -312,14 +309,14 @@ const styles = StyleSheet.create({
    },
   detectionContainer: {
     paddingHorizontal: 20,
-    alignItems: 'center', // Center text horizontally
+    alignItems: 'center',
   },
   detectionText: {
-    color: '#FFFFFF', // White text
+    color: '#FFFFFF',
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
-    backgroundColor: 'rgba(0,0,0,0.4)', // Slightly darker background for readability
+    backgroundColor: 'rgba(0,0,0,0.4)',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 5,
@@ -330,40 +327,40 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     flexDirection: 'row',
-    justifyContent: 'space-evenly', // Distribute buttons evenly
+    justifyContent: 'space-evenly',
     alignItems: 'center',
     paddingHorizontal: 20,
   },
   controlButton: {
     borderRadius: 8,
-    marginHorizontal: 5, // Keep horizontal margin
-    shadowColor: argonTheme.COLORS.BLACK, // Web might not show shadow correctly
+    marginHorizontal: 5,
+    shadowColor: argonTheme.COLORS.BLACK,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     shadowOpacity: 0.3,
     elevation: 3, // For Android (if used via react-native-web)
   },
   buttonText: {
-    color: '#FFFFFF', // White text for buttons
-    fontSize: 14, // Slightly smaller text
+    color: '#FFFFFF',
+    fontSize: 14,
     fontWeight: 'bold',
   },
   backButton: {
-    position: 'absolute', // Position at the top-left
-    top: 40, // Consistent top spacing
+    position: 'absolute',
+    top: 40,
     left: 20,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.8)', // Semi-transparent white
+    backgroundColor: 'rgba(255,255,255,0.8)',
     paddingVertical: 8,
     paddingHorizontal: 12,
-    borderRadius: 20, // Rounded corners
-    zIndex: 10, // Ensure it's above other elements
-    cursor: 'pointer', // Add pointer cursor for web
+    borderRadius: 20,
+    zIndex: 10,
+    cursor: 'pointer',
   },
   backText: {
     marginLeft: 5,
-    color: argonTheme.COLORS.PRIMARY, // Use theme color
+    color: argonTheme.COLORS.PRIMARY,
     fontWeight: 'bold',
   },
 });
