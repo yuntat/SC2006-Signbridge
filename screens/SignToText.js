@@ -112,7 +112,7 @@ function SignToText() {
             if (videoBlob.size === 0) {
                  throw new Error("Selected video file appears to be empty.");
             }
-            // --- MODIFICATION END ---
+
 
 
             // --- API Call Modification ---
@@ -168,7 +168,6 @@ function SignToText() {
 
         } catch (err) {
             console.error("Upload/Processing failed:", err);
-            // Provide more specific error messages if possible
             let displayError = err.message || t('errors.unexpectedUploadError');
              if (err.message && err.message.includes('Failed to fetch local video file')) {
                  displayError = t('errors.readFileError');
@@ -186,24 +185,6 @@ function SignToText() {
         navigation.goBack();
     };
 
-    // Add some placeholder translations if not already present
-    // Example in your i18n setup:
-    // "permissions": {
-    //   "deniedTitle": "Permission Denied",
-    //   "mediaLibraryDenied": "Sorry, we need camera roll permissions to select videos."
-    // },
-    // "errors": {
-    //    "couldNotSelectVideo": "Could not select video asset.",
-    //    "videoLibraryError": "An error occurred while opening the video library.",
-    //    "selectVideoFirst": "Please select a video file first.",
-    //    "invalidApiResponseFormat": "Invalid response format received from API.",
-    //    "unexpectedUploadError": "An unexpected error occurred during upload/processing.",
-    //    "readFileError": "Could not read the selected video file.",
-    //    "networkRequestFailed": "Network request failed. Please check your connection and the API endpoint ({{endpoint}})."
-    // },
-    // "common": {
-    //   "error": "Error"
-    // }
 
 
     return (

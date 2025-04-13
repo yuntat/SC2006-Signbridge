@@ -63,7 +63,7 @@ const wordImages = {
 };
 
 // --- MODIFIED: Define patterns to check and their mapping ---
-// Order matters: Check longer/more specific patterns first
+
 const patternsToCheck = [
     'I LOVE YOU', // Original full phrase
     'I LOVE',     // New variation
@@ -182,10 +182,6 @@ const TextToSign = () => {
                             tempCheckIndex++;
                         }
                         if (patternNoSpaces.startsWith(remainingInputCheck) && remainingInputCheck.length > 0) {
-                            // If the current char starts a potential pattern, don't treat it as isolated yet
-                            // (This check might be overly complex, the original single char logic might be sufficient)
-                            // Let's simplify - the previous word check should handle most cases. If 'LOVE'
-                            // didn't match before, 'L' should be treated as 'L'.
                         }
                     }
                     // Simplified: just push the letter if no word was found starting at this index

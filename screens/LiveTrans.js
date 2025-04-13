@@ -7,12 +7,6 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons'; // Import Ionicons
 import { useNavigation } from '@react-navigation/native';
 import { Images, argonTheme } from '../constants';
 
-// --- IMPORTANT ---
-// This component uses react-webcam and is intended for WEB ENVIRONMENTS
-// It will likely NOT work correctly in a native React Native (iOS/Android) app
-// without significant modifications or using a different camera solution.
-// Camera switching (facingMode) support depends on the browser and device capabilities.
-// --- IMPORTANT ---
 
 const LiveTrans = () => {
   const webcamRef = useRef(null); // Use webcamRef
